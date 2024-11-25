@@ -9,7 +9,7 @@ class AdminLogModel extends Model
     protected $table = 'admin_logs';
     protected $primaryKey = 'id';
     protected $allowedFields = ['admin_id', 'action', 'created_at'];
-    protected $useTimestamps = false;
+    protected $useTimestamps = true;
 
     /**
      * Fungsi untuk mendapatkan log berdasarkan admin

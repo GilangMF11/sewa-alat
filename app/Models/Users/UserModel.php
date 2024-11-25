@@ -9,7 +9,7 @@ class UserModel extends Model
     protected $table = 'users';
     protected $primaryKey = 'id';
     protected $allowedFields = ['name', 'email', 'password', 'phone', 'address', 'role', 'created_at'];
-    protected $useTimestamps = false;
+    protected $useTimestamps = true ;
 
     /**
      * Fungsi untuk mendapatkan pengguna berdasarkan email

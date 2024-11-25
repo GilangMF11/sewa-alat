@@ -9,7 +9,7 @@ class RentalModel extends Model
     protected $table = 'rentals';
     protected $primaryKey = 'id';
     protected $allowedFields = ['user_id', 'total_price', 'shipping_cost', 'status', 'created_at'];
-    protected $useTimestamps = false;
+    protected $useTimestamps = true;
 
     /**
      * Fungsi untuk mendapatkan transaksi berdasarkan pengguna

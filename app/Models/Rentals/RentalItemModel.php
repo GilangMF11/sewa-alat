@@ -9,7 +9,7 @@ class RentalItemModel extends Model
     protected $table = 'rental_items';
     protected $primaryKey = 'id';
     protected $allowedFields = ['rental_id', 'item_id', 'quantity', 'price'];
-    protected $useTimestamps = false;
+    protected $useTimestamps = true;
 
     /**
      * Fungsi untuk mendapatkan barang yang disewa berdasarkan transaksi

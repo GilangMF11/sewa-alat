@@ -9,7 +9,7 @@ class ItemModel extends Model
     protected $table = 'items';
     protected $primaryKey = 'id';
     protected $allowedFields = ['name', 'description', 'price', 'stock', 'category_id', 'image', 'created_at'];
-    protected $useTimestamps = false;
+    protected $useTimestamps = true;
 
     /**
      * Fungsi untuk mendapatkan barang beserta kategori
