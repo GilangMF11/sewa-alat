@@ -18,3 +18,6 @@ $routes->get('/logout', 'Auth\AuthController::logout');
 
 
 $routes->get('/dashboard', 'Dashboard\DashboardController::index');
+
+// category
+$routes->get('/category', 'Category\CategoryController::index');

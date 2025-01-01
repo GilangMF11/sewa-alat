@@ -9,6 +9,6 @@ class ReportController extends BaseController
 {
     public function index()
     {
-        //
+        return view('Admin/report/v_report');
     }
 }

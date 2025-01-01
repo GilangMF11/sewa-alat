@@ -9,6 +9,6 @@ class ProductController extends BaseController
 {
     public function index()
     {
-        //
+        return view('Admin/product/v_product');
     }
 }

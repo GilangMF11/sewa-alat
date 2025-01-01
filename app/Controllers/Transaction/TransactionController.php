@@ -9,6 +9,6 @@ class TransactionController extends BaseController
 {
     public function index()
     {
-        //
+        return view('Admin/transaction/v_transaction');
     }
 }

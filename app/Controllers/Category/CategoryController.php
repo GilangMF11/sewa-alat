@@ -9,6 +9,6 @@ class CategoryController extends BaseController
 {
     public function index()
     {
-        //
+        return view('Admin/category/v_category');
     }
 }
