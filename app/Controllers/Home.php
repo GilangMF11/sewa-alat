@@ -13,4 +13,18 @@ class Home extends BaseController
     {
         return view('product/v_product_detail');
     }
+
+    public function showImage($filename)
+    {
+        $path = WRITEPATH . 'uploads/products/' . $filename;
+
+        if (!is_file($path)) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException($filename);
+        }
+
+        $mime = mime_content_type($path);
+        header("Content-Type: " . $mime);
+        readfile($path);
+        exit;
+    }
 }

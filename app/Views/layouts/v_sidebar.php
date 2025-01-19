@@ -22,7 +22,7 @@
                 <?php if (session()->get('role') === 'admin'): ?>
                     <!-- Manajemen Produk -->
                     <li class="nav-item">
-                        <a href="<?= base_url('products') ?>" class="nav-link">
+                        <a href="<?= base_url('product') ?>" class="nav-link">
                             <i class="nav-icon fas fa-box"></i>
                             <p>Manajemen Produk</p>
                         </a>
@@ -38,7 +38,7 @@
 
                     <!-- Manajemen Transaksi -->
                     <li class="nav-item">
-                        <a href="<?= base_url('transactions') ?>" class="nav-link">
+                        <a href="<?= base_url('order') ?>" class="nav-link">
                             <i class="nav-icon fas fa-shopping-cart"></i>
                             <p>Manajemen Transaksi</p>
                         </a>
@@ -46,7 +46,7 @@
 
                     <!-- Laporan -->
                     <li class="nav-item">
-                        <a href="<?= base_url('reports') ?>" class="nav-link">
+                        <a href="<?= base_url('report') ?>" class="nav-link">
                             <i class="nav-icon fas fa-file-alt"></i>
                             <p>Laporan</p>
                         </a>
@@ -54,7 +54,7 @@
 
                     <!-- Pengaturan -->
                     <li class="nav-item">
-                        <a href="<?= base_url('settings') ?>" class="nav-link">
+                        <a href="<?= base_url('setting') ?>" class="nav-link">
                             <i class="nav-icon fas fa-cogs"></i>
                             <p>Pengaturan</p>
                         </a>
@@ -65,7 +65,7 @@
                 <?php if (session()->get('role') === 'user'): ?>
                     <!-- Produk -->
                     <li class="nav-item">
-                        <a href="<?= base_url('products') ?>" class="nav-link">
+                        <a href="<?= base_url('product') ?>" class="nav-link">
                             <i class="nav-icon fas fa-box"></i>
                             <p>Produk</p>
                         </a>
