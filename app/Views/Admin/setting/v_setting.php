@@ -54,6 +54,15 @@
                                 </div>
                             </div>
 
+                            <!-- Background -->
+                            <div class="form-group row">
+                                <label for="logo" class="col-sm-2 col-form-label">Latar Belakang</label>
+                                <div class="col-sm-10">
+                                    <input type="file" class="form-control" id="logo" name="logo">
+                                    <small class="form-text text-muted">Upload Background (JPG, PNG, max 2MB)</small>
+                                </div>
+                            </div>
+
                             <!-- URL Sosial Media -->
                             <div class="form-group row">
                                 <label for="facebook" class="col-sm-2 col-form-label">Facebook</label>

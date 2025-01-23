@@ -109,7 +109,7 @@
                         <h3 class="card-title font-weight-bold">Daftar Pengguna</h3>
                     </div>
                     <div class="card-body">
-                        <table class="table table-bordered">
+                        <table class="table table-bordered" id="example1">
                             <thead>
                                 <tr>
                                     <th>No</th>
@@ -132,8 +132,9 @@
                                         <td><?= esc($user['address']) ?></td>
                                         <td><?= esc($user['role']) ?></td>
                                         <td>
-                                            <a href="<?= base_url('/user/edit/' . $user['id']) ?>" class="btn btn-warning btn-sm">Edit</a>
-                                            <a href="<?= base_url('/user/delete/' . $user['id']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus pengguna ini?')">Hapus</a>
+                                            <!-- Tombol Edit dan Hapus menggunakan ikon -->
+                                            <a href="<?= base_url('/user/edit/' . $user['id']) ?>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                                            <a href="<?= base_url('/user/delete/' . $user['id']) ?>" class="btn btn-danger btn-sm delete-btn" data-id="<?= $user['id'] ?>"><i class="fas fa-trash"></i></a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -144,4 +145,99 @@
             </div>
         </section>
     </div>
+
+    <!-- Modal Edit Pengguna -->
+<div class="modal fade" id="modalUpdate" tabindex="-1" role="dialog" aria-labelledby="modalUpdateLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form action="<?= base_url('user/store') ?>" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalUpdateLabel">Edit Pengguna</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="id">
+                    <div class="form-group">
+                        <label for="name">Nama</label>
+                        <input type="text" name="name" class="form-control" id="name" placeholder="Masukkan Nama Pengguna">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" name="email" class="form-control" id="email" placeholder="Masukkan Email Pengguna">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Telepon</label>
+                        <input type="text" name="phone" class="form-control" id="phone" placeholder="Masukkan Telepon Pengguna">
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Alamat</label>
+                        <input type="text" name="address" class="form-control" id="address" placeholder="Masukkan Alamat Pengguna">
+                    </div>
+                    <div class="form-group">
+                        <label for="role">Role</label>
+                        <select name="role" class="form-control" id="role">
+                            <option value="admin">Admin</option>
+                            <option value="user">User</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Update Pengguna</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+    <!-- Script SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+    $(document).ready(function () {
+        // Konfirmasi hapus dengan SweetAlert
+        $(".delete-btn").click(function (e) {
+            e.preventDefault();
+            var deleteUrl = "<?= base_url('user/delete/') ?>" + $(this).data('id');
+            
+            Swal.fire({
+                title: 'Apakah Anda Yakin?',
+                text: "Pengguna ini akan dihapus!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = deleteUrl;
+                }
+            });
+        });
+
+        // Isi modal edit dengan data pengguna
+        $('#modalUpdate').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var id = button.data('id');
+            var name = button.data('name');
+            var email = button.data('email');
+            var phone = button.data('phone');
+            var address = button.data('address');
+            var role = button.data('role');
+            
+            var modal = $(this);
+            modal.find('.modal-body #id').val(id);
+            modal.find('.modal-body #name').val(name);
+            modal.find('.modal-body #email').val(email);
+            modal.find('.modal-body #phone').val(phone);
+            modal.find('.modal-body #address').val(address);
+            modal.find('.modal-body #role').val(role);
+        });
+    });
+</script>
+
+
 <?= $this->endSection() ?>

@@ -47,7 +47,7 @@ class UserController extends BaseController
             'email' => $this->request->getPost('email'),
             'phone' => $this->request->getPost('phone'),
             'address' => $this->request->getPost('address'),
-            'role' => $this->request->getPost('role', 'user'), // Default role 'user'
+            'role' => $this->request->getPost('role') ?? 'user', // Default role 'user'
             'password' => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT), // Hash password
         ];
 

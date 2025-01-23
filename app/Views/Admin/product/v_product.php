@@ -184,7 +184,7 @@
                         <input type="file" name="image" class="form-control" id="image">
                         <br>
                         <!-- Menampilkan gambar lama jika ada -->
-<img src="" id="modalImageSrc" alt="Gambar Produk" width="150">
+                    <img src="" id="modalImageSrc" alt="Gambar Produk" width="150">
 
                     </div>
 
@@ -279,7 +279,7 @@
                 modal.find('.modal-body #price').val(price);
                 modal.find('.modal-body #description').val(description);
                 modal.find('.modal-body #stock').val(stock);
-                modal.find('.modal-body #modalImageSrc').attr('src', '<?= base_url('show/products/') ?>' + image);
+                modal.find('.modal-body #modalImageSrc').attr('src', '<?= base_url('show/product/') ?>' . image);
                 
                 // Jangan set nilai input file, biarkan kosong
             });

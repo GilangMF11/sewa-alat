@@ -6,8 +6,8 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 $routes->get('/', 'Home::index');
-$routes->get('/galeri', 'Home::galeri');
-$routes->get('/detail-product', 'Home::detailProduct');
+$routes->get('/galeri', 'Home::allProducts');
+$routes->get('product/detail/(:any)', 'Home::detailProduct/$1');
 
 $routes->get('/register', 'Auth\AuthController::register');
 $routes->post('/register', 'Auth\AuthController::registerProses');

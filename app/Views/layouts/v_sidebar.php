@@ -44,6 +44,14 @@
                         </a>
                     </li>
 
+                    <!-- Pengguna -->
+                    <li class="nav-item">
+                        <a href="<?= base_url('user') ?>" class="nav-link">
+                            <i class="nav-icon fas fa-users"></i>
+                            <p>Pengguna</p>
+                        </a>
+                    </li>
+
                     <!-- Laporan -->
                     <li class="nav-item">
                         <a href="<?= base_url('report') ?>" class="nav-link">
