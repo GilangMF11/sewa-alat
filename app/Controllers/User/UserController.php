@@ -77,4 +77,60 @@ class UserController extends BaseController
         session()->setFlashdata('success', 'Pengguna berhasil dihapus');
         return redirect()->to('/user');
     }
+
+    
+    // Menampilkan profil pengguna
+    public function profile()
+    {
+        // Pastikan ada ID pengguna di session
+        $userId = session()->get('user_id');
+         if (!$userId) {
+            return redirect()->to('/login'); // Redirect ke halaman login jika belum login
+        }
+    
+        // Ambil data pengguna berdasarkan ID
+        $user = $this->userModel->find($userId);
+    
+        // Kirim data pengguna ke view
+        return view('Users/profile/v_user_profile', ['user' => $user]);
+    }
+    
+        // Fungsi untuk memperbarui profil pengguna
+    public function updateProfile()
+    {
+        // Pastikan ada ID pengguna di session
+        $userId = session()->get('user_id');
+        if (!$userId) {
+            return redirect()->to('/login');
+        }
+    
+        // Validasi data input
+        $validation = \Config\Services::validation();
+            $rules = [
+                'name' => 'required|min_length[3]',
+                'email' => 'required|valid_email',
+                'phone' => 'required',
+                'address' => 'required',
+            ];
+    
+            if (!$this->validate($rules)) {
+                // Jika validasi gagal, kembali ke halaman sebelumnya dengan pesan error
+                return redirect()->back()->withInput()->with('errors', $validation->getErrors());
+            }
+    
+            // Ambil data dari form
+            $userData = [
+                'name' => $this->request->getPost('name'),
+                'email' => $this->request->getPost('email'),
+                'phone' => $this->request->getPost('phone'),
+                'address' => $this->request->getPost('address'),
+            ];
+    
+        // Update data pengguna berdasarkan ID
+        $this->userModel->update($userId, $userData);
+        session()->setFlashdata('success', 'Profil berhasil diperbarui');
+    
+        return redirect()->to('/user/profile');
+    }
+    
 }

@@ -63,6 +63,18 @@ $routes->group('', ['filter' => 'auth'], function($routes) {
     $routes->group('setting', ['namespace' => 'App\Controllers\Setting'], function($routes) {
         $routes->get('/', 'SettingController::index');
     });
+
+
+    // ======================================== //
+    //               USER                      //
+    // ======================================== //
+
+    // Profile
+    $routes->group('profile', ['namespace' => 'App\Controllers\User'], function($routes) {
+        $routes->get('/', 'UserController::profile');
+        $routes->post('update', 'UserController::updateProfile');
+    });
+
 });
 
 

@@ -11,9 +11,7 @@ class UserModel extends Model
     protected $allowedFields = ['name', 'email', 'password', 'phone', 'address', 'role', 'created_at'];
     protected $createdField = 'created_at';
 
-    /**
-     * Fungsi untuk mendapatkan pengguna berdasarkan email
-     */
+    
     public function getUserByEmail($email)
     {
         return $this->where('email', $email)->first();
