@@ -28,10 +28,7 @@
                         <h3 class="card-title font-weight-bold"><?= isset($user['id']) ? 'Edit' : 'Tambah' ?> Pengguna</h3>
                     </div>
                     <div class="card-body">
-                        <!-- Menampilkan error atau success message -->
-                        <?php if (session()->getFlashdata('success')): ?>
-                            <div class="alert alert-success"><?= session()->getFlashdata('success') ?></div>
-                        <?php endif; ?>
+                        
                         <?php if (isset($errors)): ?>
                             <div class="alert alert-danger">
                                 <ul>
@@ -98,7 +95,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary"><?= isset($user['id']) ? 'Update' : 'Simpan' ?> Pengguna</button>
+                            <button type="submit" class="btn btn-primary"><?= isset($user['id']) ? 'Update' : 'Simpan' ?></button>
                         </form>
                     </div>
                 </div>
@@ -133,7 +130,16 @@
                                         <td><?= esc($user['role']) ?></td>
                                         <td>
                                             <!-- Tombol Edit dan Hapus menggunakan ikon -->
-                                            <a href="<?= base_url('/user/edit/' . $user['id']) ?>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                                            <a href="#" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#modalUpdate"
+                                                data-id="<?= $user['id'] ?>"
+                                                data-name="<?= esc($user['name']) ?>"
+                                                data-email="<?= esc($user['email']) ?>"
+                                                data-phone="<?= esc($user['phone']) ?>"
+                                                data-address="<?= esc($user['address']) ?>"
+                                                data-role="<?= esc($user['role']) ?>">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+
                                             <a href="<?= base_url('/user/delete/' . $user['id']) ?>" class="btn btn-danger btn-sm delete-btn" data-id="<?= $user['id'] ?>"><i class="fas fa-trash"></i></a>
                                         </td>
                                     </tr>
@@ -182,6 +188,25 @@
                             <option value="user">User</option>
                         </select>
                     </div>
+
+                    <!-- Password and Confirm Password -->
+                    <div class="form-row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Isi jika ingin mengganti password">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="password_confirm">Konfirmasi Password</label>
+                                <input type="password" class="form-control" id="password_confirm" name="password_confirm" placeholder="Konfirmasi password baru">
+                            </div>
+                        </div>
+                    </div>
+
+
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
@@ -196,7 +221,7 @@
     <!-- Script SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-    $(document).ready(function () {
+    document.addEventListener('DOMContentLoaded', function () {
         // Konfirmasi hapus dengan SweetAlert
         $(".delete-btn").click(function (e) {
             e.preventDefault();
@@ -220,7 +245,7 @@
 
         // Isi modal edit dengan data pengguna
         $('#modalUpdate').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget);
+            var button = $(event.relatedTarget); // Tombol yang memicu modal
             var id = button.data('id');
             var name = button.data('name');
             var email = button.data('email');
@@ -236,6 +261,15 @@
             modal.find('.modal-body #address').val(address);
             modal.find('.modal-body #role').val(role);
         });
+
+        // Menampilkan SweetAlert2 setelah Insert/Update/Delete
+        <?php if (session()->getFlashdata('success')): ?>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: '<?= session()->getFlashdata('success'); ?>',
+                });
+            <?php endif; ?>
     });
 </script>
 

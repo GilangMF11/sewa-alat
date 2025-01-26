@@ -33,8 +33,6 @@ class UserController extends BaseController
             'email' => 'required|valid_email',
             'phone' => 'required',
             'address' => 'required',
-            'password' => 'required|min_length[6]', // Validasi password
-            'password_confirm' => 'matches[password]', // Validasi confirm password
         ];
 
         if (!$this->validate($rules)) {
@@ -42,30 +40,43 @@ class UserController extends BaseController
             return redirect()->back()->withInput()->with('errors', $validation->getErrors());
         }
 
+        // Ambil data dari form
         $userData = [
             'name' => $this->request->getPost('name'),
             'email' => $this->request->getPost('email'),
             'phone' => $this->request->getPost('phone'),
             'address' => $this->request->getPost('address'),
-            'role' => $this->request->getPost('role') ?? 'user', // Default role 'user'
-            'password' => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT), // Hash password
         ];
 
         $userId = $this->request->getPost('id'); // Ambil ID pengguna jika ada (untuk update)
 
+        // Cek jika password baru ada
+        $newPassword = $this->request->getPost('password');
+        if ($newPassword) {
+            // Validasi password
+            $passwordConfirm = $this->request->getPost('password_confirm');
+            if ($newPassword !== $passwordConfirm) {
+                return redirect()->back()->withInput()->with('errors', ['Password confirmation does not match']);
+            }
+
+            // Hash password baru
+            $userData['password'] = password_hash($newPassword, PASSWORD_DEFAULT);
+        }
+
         if ($userId) {
             // Jika ada ID, lakukan update
             $this->userModel->update($userId, $userData);
-            session()->setFlashdata('success', 'Pengguna berhasil diupdate');
+            return redirect()->to('/user')->with('success', 'Pengguna berhasil diperbarui');
         } else {
             // Jika tidak ada ID, lakukan create
             $this->userModel->save($userData);
-            session()->setFlashdata('success', 'Pengguna berhasil ditambahkan');
+            return redirect()->to('/user')->with('success', 'Pengguna berhasil ditambahkan');
         }
 
         // Redirect ke halaman pengguna setelah sukses
         return redirect()->to('/user');
     }
+
 
     // Fungsi untuk menghapus pengguna
     public function delete($id)
@@ -74,8 +85,8 @@ class UserController extends BaseController
         $this->userModel->delete($id);
 
         // Redirect dengan pesan berhasil
-        session()->setFlashdata('success', 'Pengguna berhasil dihapus');
-        return redirect()->to('/user');
+        //session()->setFlashdata('success', 'Pengguna berhasil dihapus');
+        return redirect()->to('/user')->with('success', 'Pengguna berhasil dihapus');
     }
 
     
