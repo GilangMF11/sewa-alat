@@ -28,10 +28,6 @@
   <link rel="stylesheet" href="<?= base_url() ?>template/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="<?= base_url() ?>template/dist/css/adminlte.min.css">
-  <!-- Tambahkan ini ke dalam bagian head HTML Anda -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
-  <!-- Tambahkan ini ke dalam bagian head HTML Anda -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
   <!-- Tambahkan ini di file view Anda -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

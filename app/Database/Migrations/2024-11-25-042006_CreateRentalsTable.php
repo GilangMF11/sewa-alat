@@ -27,10 +27,17 @@ class CreateRentalsTable extends Migration
                 'constraint' => '10,2',
                 'null' => true,
             ],
-            'status' => [
-                'type' => 'ENUM',
-                'constraint' => ['pending', 'confirmed', 'canceled'],
-                'default' => 'pending',
+            'return_status' => [
+                'type' => 'INT',
+                'unsigned' => true,
+            ],
+            'payment_status' => [
+                'type' => 'INT',
+                'unsigned' => true,
+            ],
+            'discount' => [
+                'type' => 'DECIMAL',
+                'constraint' => '10,2',
             ],
             'created_at' => [
                 'type' => 'TIMESTAMP',

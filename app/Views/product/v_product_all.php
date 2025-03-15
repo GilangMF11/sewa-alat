@@ -32,7 +32,7 @@
     <!-- Produk -->
     <section class="container mx-auto px-4 py-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         <?php foreach ($products as $product): ?>
-        <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+        <div class="bg-white shadow-lg rounded-lg overflow-hidden transform hover:scale-105 transition-transform duration-300 cursor-pointer">
             <img src="<?= base_url('show/product/' . esc($product['image'])); ?>" alt="<?= esc($product['name']); ?>" class="w-full h-64 object-cover">
             <div class="p-4">
                 <h2 class="text-xl font-bold text-gray-800"><?= esc($product['name']); ?></h2>

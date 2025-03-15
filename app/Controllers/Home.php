@@ -14,7 +14,7 @@ class Home extends BaseController
     public function index()
     {
         $data = [
-            'products' => $this->itemModel->findAll(),
+            'products' => $this->itemModel->orderBy('name', 'asc')->findAll()
         ];
         return view('landing/v_landing', $data);
     }

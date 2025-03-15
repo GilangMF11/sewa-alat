@@ -46,6 +46,7 @@ class AuthController extends BaseController
                 // Set sesi pengguna
                 session()->set([
                     'user_id'    => $user['id'],
+                    'name'       => $user['name'],
                     'role'       => $user['role'],
                     'isLoggedIn' => true,
                 ]);

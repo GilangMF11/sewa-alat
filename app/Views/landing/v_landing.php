@@ -88,38 +88,41 @@
 
     <!-- Galeri Produk -->
     <section id="galeri" class="bg-gray-100 py-16">
-        <div class="container mx-auto px-6">
-            <h3 class="text-4xl font-semibold text-center text-blue-600 mb-8">Galeri Alat</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                <!-- Loop untuk menampilkan produk -->
-                <?php foreach ($products as $product): ?>
-                <div class="bg-white shadow-xl rounded-lg overflow-hidden transform hover:scale-105 transition-transform duration-300 cursor-pointer"
-                    onclick="window.location.href='<?= base_url('product/detail/' . $product['id']) ?>'">
-                    <!-- Menampilkan gambar produk -->
-                    <img src="<?= base_url('show/product/' . $product['image']) ?>" alt="<?= esc($product['name']) ?>"
-                        class="w-full h-48 object-cover">
-                    <div class="p-6">
-                        <!-- Menampilkan nama dan harga produk -->
-                        <h4 class="font-semibold text-lg text-gray-800"><?= esc($product['name']) ?></h4>
-                        <p class="text-gray-500">Mulai dari Rp<?= number_format($product['price'], 0, ',', '.') ?></p>
-                        <!-- Tombol Pesan -->
-                        <a href="https://wa.me/6282188865677?text=Halo,%20saya%20tertarik%20untuk%20memesan%20produk%20<?= urlencode($product['name']) ?>"
-                            class="mt-4 w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 text-center inline-block transition duration-200">
-                            Pesan
-                        </a>
-                    </div>
+    <div class="container mx-auto px-6">
+        <h3 class="text-4xl font-semibold text-center text-blue-600 mb-8">Galeri Alat</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <!-- Loop untuk menampilkan produk -->
+            <?php $i = 0; foreach ($products as $product): ?>
+            <?php if ($i < 8): ?>
+            <div class="bg-white shadow-xl rounded-lg overflow-hidden transform hover:scale-105 transition-transform duration-300 cursor-pointer"
+                onclick="window.location.href='<?= base_url('product/detail/' . $product['id']) ?>'">
+                <!-- Menampilkan gambar produk -->
+                <img src="<?= base_url('show/product/' . $product['image']) ?>" alt="<?= esc($product['name']) ?>"
+                    class="w-full h-48 object-cover">
+                <div class="p-6">
+                    <!-- Menampilkan nama dan harga produk -->
+                    <h4 class="font-semibold text-lg text-gray-800"><?= esc($product['name']) ?></h4>
+                    <p class="text-gray-500">Mulai dari Rp<?= number_format($product['price'], 0, ',', '.') ?></p>
+                    <!-- Tombol Pesan -->
+                    <a href="https://wa.me/6282188865677?text=Halo,%20saya%20tertarik%20untuk%20memesan%20produk%20<?= urlencode($product['name']) ?>"
+                        class="mt-4 w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 text-center inline-block transition duration-200">
+                        Pesan
+                    </a>
                 </div>
-                <?php endforeach; ?>
             </div>
-
-            <!-- Tombol Lihat Semua -->
-            <div class="mt-8 text-center">
-                <a href="/galeri" class="bg-blue-600 text-white py-3 px-8 rounded-lg hover:bg-blue-700 transition duration-200 inline-block">
-                    Lihat Semua
-                </a>
-            </div>
+            <?php endif; ?>
+            <?php $i++; endforeach; ?>
         </div>
-    </section>
+
+        <!-- Tombol Lihat Semua -->
+        <div class="mt-8 text-center">
+            <a href="/galeri" class="bg-blue-600 text-white py-3 px-8 rounded-lg hover:bg-blue-700 transition duration-200 inline-block">
+                Lihat Semua
+            </a>
+        </div>
+
+        
+</section>
 
     <!-- Testimoni Pelanggan (Infinite Running Card) -->
     <section class="bg-gray-100 py-16 overflow-hidden">

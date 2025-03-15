@@ -8,7 +8,7 @@ class RentalModel extends Model
 {
     protected $table = 'rentals';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['user_id', 'total_price', 'shipping_cost', 'status', 'created_at'];
+    protected $allowedFields = ['user_id', 'total_price', 'shipping_cost', 'return_status', 'payment_status', 'discount', 'created_at'];
     protected $useTimestamps = true;
 
     /**

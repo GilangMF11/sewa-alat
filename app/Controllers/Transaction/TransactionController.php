@@ -27,7 +27,7 @@ class TransactionController extends BaseController
     public function index()
     {
         $data = [
-            'products' => $this->itemModel->findAll(),
+            'products' => $this->itemModel->orderBy('name', 'asc')->findAll(),
             'users' => $this->userModel->findAll(),
         ];
         
