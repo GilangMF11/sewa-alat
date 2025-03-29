@@ -1,6 +1,6 @@
   <!-- Main Footer -->
   <footer class="main-footer text-center">
-    <strong>Sistem Rental Alat | Copyright &copy; 2024</strong>
+    <strong>Sistem Rental Alat Jawa | Copyright &copy; 2025</strong>
     
   </footer>
 </div>

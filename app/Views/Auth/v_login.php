@@ -18,22 +18,23 @@
     <style>
     .logo-image {
         width: 120px;
-        height: auto; /* menjaga proporsi gambar */
+        height: auto;
+        /* menjaga proporsi gambar */
         opacity: 0.8;
     }
-</style>
+    </style>
 
 </head>
 
 <body class="hold-transition login-page">
     <div class="login-box">
-        
-        
+
+
         <!-- Text Center Koperasi Primkop -->
         <!-- <div class="text-center">
         <h1>PRIMKOP KARTIKA</h1>
         </div> -->
-            
+
         <!-- /.login-logo -->
         <div class="card">
             <div class="card-body login-card-body">
@@ -41,17 +42,18 @@
 
                 <!-- Flash Message -->
                 <?php if (session()->getFlashdata('success')): ?>
-                    <div class="alert alert-success" role="alert">
-                        <?= session()->getFlashdata('success') ?>
-                    </div>
+                <div class="alert alert-success" role="alert">
+                    <?= session()->getFlashdata('success') ?>
+                </div>
                 <?php endif; ?>
                 <?php if (session()->getFlashdata('error')): ?>
-                    <div class="alert alert-danger" role="alert">
-                        <?= session()->getFlashdata('error') ?>
-                    </div>
+                <div class="alert alert-danger" role="alert">
+                    <?= session()->getFlashdata('error') ?>
+                </div>
                 <?php endif; ?>
 
-                
+
+
                 <!-- Login Form -->
                 <form action="<?= base_url('login') ?>" method="post">
                     <?= csrf_field() ?>

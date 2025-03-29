@@ -18,6 +18,9 @@ $routes->get('/logout', 'Auth\AuthController::logout');
 
 $routes->get('/show/product/(:any)', 'Home::showImage/$1');
 
+// get user
+$routes->get('user/search', 'User\UserController::search');
+
 
 
 

@@ -22,6 +22,12 @@ class CreateRentalItemsTable extends Migration
                 'type' => 'INT',
                 'unsigned' => true,
             ],
+            'borrow_date' => [
+                'type' => 'DATE',
+            ],
+            'return_date' => [
+                'type' => 'DATE',
+            ],
             'quantity' => [
                 'type' => 'INT',
                 'unsigned' => true,

@@ -54,11 +54,14 @@ class AuthController extends BaseController
                 return redirect()->to('/dashboard');
             } else {
                 // Password salah
-                return view('Auth/v_login', ['error' => 'Password salah']);
+                session()->setFlashdata('error', 'Password salah');
+                return redirect()->to('/login');
+
             }
         } else {
-            // Email tidak ditemukan
-            return view('Auth/v_login', ['error' => 'Email tidak ditemukan']);
+            session()->setFlashdata('error', 'Password salah');
+            return redirect()->to('/login');
+
         }
     }
 

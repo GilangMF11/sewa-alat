@@ -143,5 +143,18 @@ class UserController extends BaseController
     
         return redirect()->to('/user/profile');
     }
+
+    public function search()
+    {
+        $query = $this->request->getGet('query');
+
+        if ($query) {
+            $users = $this->userModel->like('name', $query)->findAll();
+        } else {
+            $users = $this->userModel->findAll();
+        }
+
+        return $this->response->setJSON([]);
+    }
     
 }

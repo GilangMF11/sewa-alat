@@ -28,7 +28,7 @@
                         <!-- Total Produk -->
                         <div class="small-box bg-info">
                             <div class="inner">
-                                <h3>30</h3> <!-- Contoh data statis -->
+                                <h3><?= $items; ?></h3> <!-- Contoh data statis -->
                                 <p>Total Produk</p>
                             </div>
                             <div class="icon">
@@ -67,7 +67,7 @@
                         <!-- Total Pengguna -->
                         <div class="small-box bg-danger">
                             <div class="inner">
-                                <h3>50</h3> <!-- Contoh data statis -->
+                                <h3><?= $users; ?></h3> <!-- Contoh data statis -->
                                 <p>Total Pengguna</p>
                             </div>
                             <div class="icon">
