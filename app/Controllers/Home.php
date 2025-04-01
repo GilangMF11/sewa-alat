@@ -2,19 +2,23 @@
 
 namespace App\Controllers;
 use App\Models\Items\ItemModel;
+use App\Models\Settings\SettingModel;
 
 class Home extends BaseController
 {
     protected $itemModel;
+    protected $settingModel;
 
     public function __construct()
     {
         $this->itemModel = new ItemModel();
+        $this->settingModel = new SettingModel();
     }
     public function index()
     {
         $data = [
-            'products' => $this->itemModel->orderBy('name', 'asc')->findAll()
+            'products' => $this->itemModel->orderBy('name', 'asc')->findAll(),
+            'setting' => $this->settingModel->first()
         ];
         return view('landing/v_landing', $data);
     }
@@ -63,6 +67,40 @@ class Home extends BaseController
     public function showImage($filename)
     {
         $path = WRITEPATH . 'uploads/products/' . $filename;
+
+        if (!is_file($path)) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException($filename);
+        }
+
+        $mime = mime_content_type($path);
+        header("Content-Type: " . $mime);
+        readfile($path);
+        exit;
+    }
+
+    public function showImageHome($filename)
+    {
+        $path = WRITEPATH . 'uploads/background/' . $filename;
+
+        if (!is_file($path)) {
+            // Bisa redirect ke gambar default atau tampilkan error image
+            $path = WRITEPATH . 'uploads/background/default.jpg';
+            if (!is_file($path)) {
+                throw new \CodeIgniter\Exceptions\PageNotFoundException($filename);
+            }
+        }
+
+        $mime = mime_content_type($path);
+        header("Content-Type: " . $mime);
+        header("Content-Length: " . filesize($path));
+        ob_clean(); flush(); // Hentikan output buffer kalau ada
+        readfile($path);
+        exit;
+    }
+
+    public function showImageLogo($filename)
+    {
+        $path = WRITEPATH . 'uploads/logo/' . $filename;
 
         if (!is_file($path)) {
             throw new \CodeIgniter\Exceptions\PageNotFoundException($filename);

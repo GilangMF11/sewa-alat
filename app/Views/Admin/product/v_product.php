@@ -22,7 +22,7 @@
         <section class="content">
             <div class="container-fluid">
                 <!-- Tambah Produk -->
-                <div class="card">
+                <div class="card card-primary">
                     <div class="card-header">
                         <h3 class="card-title">Tambah Produk</h3>
                     </div>

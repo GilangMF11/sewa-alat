@@ -23,7 +23,7 @@
         <section class="content">
             <div class="container-fluid">
                 <!-- Tambah Kategori -->
-                <div class="card">
+                <div class="card card-primary">
                     <div class="card-header">
                         <h3 class="card-title">Tambah Kategori</h3>
                     </div>

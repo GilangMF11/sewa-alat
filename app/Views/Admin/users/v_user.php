@@ -23,7 +23,7 @@
         <section class="content">
             <div class="container-fluid">
                 <!-- Form Input / Edit User -->
-                <div class="card border-primary mb-4">
+                <div class="card card-primary border-primary mb-4">
                     <div class="card-header custom-header-bg">
                         <h3 class="card-title font-weight-bold"><?= isset($user['id']) ? 'Edit' : 'Tambah' ?> Pengguna</h3>
                     </div>
@@ -101,7 +101,7 @@
                 </div>
 
                 <!-- Daftar Pengguna -->
-                <div class="card border-primary">
+                <div class="card card-success border-primary">
                     <div class="card-header custom-header-bg">
                         <h3 class="card-title font-weight-bold">Daftar Pengguna</h3>
                     </div>

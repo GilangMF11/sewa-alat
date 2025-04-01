@@ -106,6 +106,9 @@
                             </select>
                         </div>
 
+                        
+
+
                         <div class="form-group">
                             <label for="proof_of_payment"><i class="fas fa-image"></i> Upload Bukti Pembayaran</label>
                             <input type="file" name="proof_of_payment" id="proof_of_payment" class="form-control">
@@ -195,14 +198,19 @@ document.addEventListener('DOMContentLoaded', function() {
     // Hitung total harga semua barang
     function updateTotalPrice() {
         let totalPrice = 0;
+
         document.querySelectorAll('#itemsTable tbody tr').forEach(row => {
             const price = parseFloat(row.querySelector('.price').value.replace(/\./g, '')) || 0;
             totalPrice += price;
         });
 
-        document.getElementById('total_price_display').value = formatCurrency(totalPrice);
-        document.getElementById('total_price').value = totalPrice;
+        const discount = parseFloat(document.getElementById('discount').value) || 0;
+        const finalPrice = totalPrice - discount;
+
+        document.getElementById('total_price_display').value = formatCurrency(finalPrice);
+        document.getElementById('total_price').value = finalPrice;
     }
+
 
     function formatCurrency(value) {
         return value.toLocaleString('id-ID');

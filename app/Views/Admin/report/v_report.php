@@ -30,6 +30,13 @@
                     <div class="card-body">
                         <!-- Filter Form -->
                         <div class="row mb-3">
+                        <div class="col-md-2">
+                                <select class="form-control" id="filterTahun">
+                                    <option value="">Pilih Status</option>
+                                    <option value="2025">Sudah DiKembalikan</option>
+                                    <option value="2025">Belum DiKembalikan</option>
+                                </select>
+                            </div>
                             <div class="col-md-3">
                                 <select class="form-control" id="filterBulan">
                                     <option value="">Pilih Bulan</option>

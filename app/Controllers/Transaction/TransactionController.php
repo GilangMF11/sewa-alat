@@ -61,11 +61,17 @@ class TransactionController extends BaseController
             $proof_of_payment->move(WRITEPATH . 'uploads/payments', $newProof);
         }
 
+        // Discount
+        $discount = $request->getPost('discount');
+        $totalPrice = $request->getPost('total_price');
+        $discountedPrice = $totalPrice - $discount;
+
+
         $rentalData = [
             'transaction_code' => $transaction_code,
             'user_id' => $request->getPost('user_id') ?? null,
             'customer_name' => $customerName,
-            'total_price' => $request->getPost('total_price') ?? 0,
+            'total_price' => $discountedPrice ?? 0,
             'address' => $request->getPost('address') ?? '',
             'shipping_cost' => $request->getPost('shipping_cost'),
             'return_status' => $request->getPost('return_status') ?? 1,
@@ -74,7 +80,7 @@ class TransactionController extends BaseController
             'down_payment' => $request->getPost('down_payment'),
             'payment_due' => $request->getPost('payment_due'),
             'proof_of_payment' => $proof_of_payment ? $newProof : null,
-            'discount' => $request->getPost('discount'),
+            'discount' => $discount,
         ];
 
         $items = $request->getPost('items');
@@ -112,7 +118,7 @@ class TransactionController extends BaseController
             return redirect()->back()->withInput()->with('errors', 'Gagal menyimpan transaksi.');
         }
 
-        return redirect()->to(base_url('transaction'))->with('success', 'Transaksi berhasil disimpan');
+        return redirect()->to(base_url('order'))->with('success', 'Transaksi berhasil disimpan');
     }
 
 

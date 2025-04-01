@@ -17,6 +17,8 @@ $routes->post('/login', 'Auth\AuthController::loginProses');
 $routes->get('/logout', 'Auth\AuthController::logout');
 
 $routes->get('/show/product/(:any)', 'Home::showImage/$1');
+$routes->get('/show/image/(:any)', 'Home::showImageHome/$1');
+$routes->get('/show/logo/(:any)', 'Home::showImageLogo/$1');
 
 // get user
 $routes->get('user/search', 'User\UserController::search');
@@ -65,6 +67,7 @@ $routes->group('', ['filter' => 'auth'], function($routes) {
     // Setting
     $routes->group('setting', ['namespace' => 'App\Controllers\Setting'], function($routes) {
         $routes->get('/', 'SettingController::index');
+        $routes->post('save', 'SettingController::save');
     });
 
 
