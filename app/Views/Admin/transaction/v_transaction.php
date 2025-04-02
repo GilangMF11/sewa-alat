@@ -21,20 +21,22 @@
     <section class="content">
         <div class="container-fluid">
             <?php if (session()->getFlashdata('errors')): ?>
-                <div class="alert alert-danger">
-                    <?= session()->getFlashdata('errors') ?>
-                </div>
+            <div class="alert alert-danger">
+                <?= session()->getFlashdata('errors') ?>
+            </div>
             <?php endif; ?>
 
             <div class="card card-primary">
                 <div class="card-header">
                     <h3 class="card-title">Input Data Transaksi</h3>
                 </div>
-                <form action="<?= base_url('order/store') ?>" method="post" enctype="multipart/form-data" id="transactionForm">
+                <form action="<?= base_url('order/store') ?>" method="post" enctype="multipart/form-data"
+                    id="transactionForm">
                     <div class="card-body">
                         <div class="form-group">
                             <label for="customer_name"><i class="fas fa-user"></i> Nama Penyewa</label>
-                            <input type="text" name="customer_name" id="customer_name" class="form-control" placeholder="Masukkan Nama Penyewa" required>
+                            <input type="text" name="customer_name" id="customer_name" class="form-control"
+                                placeholder="Masukkan Nama Penyewa" required>
                         </div>
 
                         <div class="form-row">
@@ -50,12 +52,14 @@
 
                         <div class="form-group">
                             <label for="address"><i class="fas fa-map-marker-alt"></i> Alamat Pengiriman</label>
-                            <input type="text" name="address" id="address" class="form-control" placeholder="Masukkan alamat lengkap">
+                            <input type="text" name="address" id="address" class="form-control"
+                                placeholder="Masukkan alamat lengkap">
                         </div>
 
                         <div class="form-group">
                             <label for="shipping_cost"><i class="fas fa-truck"></i> Biaya Pengiriman (Rp)</label>
-                            <input type="number" name="shipping_cost" id="shipping_cost" class="form-control" placeholder="Contoh: 100000">
+                            <input type="number" name="shipping_cost" id="shipping_cost" class="form-control"
+                                placeholder="Contoh: 100000">
                         </div>
 
                         <div class="form-group">
@@ -75,14 +79,16 @@
                                             <select name="items[0][item_id]" class="form-control item-select" required>
                                                 <option value="">-- Pilih Barang --</option>
                                                 <?php foreach ($products as $item): ?>
-                                                    <option value="<?= $item['id'] ?>" data-price="<?= $item['price'] ?>">
-                                                        <?= $item['name'] ?>
-                                                    </option>
+                                                <option value="<?= $item['id'] ?>" data-price="<?= $item['price'] ?>">
+                                                    <?= $item['name'] ?>
+                                                </option>
                                                 <?php endforeach; ?>
                                             </select>
                                         </td>
-                                        <td><input type="number" name="items[0][quantity]" class="form-control quantity" value="1" min="1" required></td>
-                                        <td><input type="text" name="items[0][price]" class="form-control price" readonly></td>
+                                        <td><input type="number" name="items[0][quantity]" class="form-control quantity"
+                                                value="1" min="1" required></td>
+                                        <td><input type="text" name="items[0][price]" class="form-control price"
+                                                readonly></td>
                                         <td class="text-center">
                                             <button type="button" class="btn btn-sm btn-danger remove-item">
                                                 <i class="fas fa-times"></i>
@@ -106,7 +112,16 @@
                             </select>
                         </div>
 
-                        
+                        <div class="form-group">
+                            <label for="down_payment"><i class="fas fa-money-bill-wave"></i> Uang Muka (DP) (Rp)</label>
+                            <input type="number" name="down_payment" id="down_payment" class="form-control" value="0"
+                                placeholder="Contoh: 250000">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="payment_due"><i class="fas fa-calendar-alt"></i> Jatuh Tempo Pelunasan</label>
+                            <input type="date" name="payment_due" id="payment_due" class="form-control">
+                        </div>
 
 
                         <div class="form-group">

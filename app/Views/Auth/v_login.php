@@ -15,6 +15,8 @@
     <link rel="stylesheet" href="<?= base_url() ?>template/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="<?= base_url() ?>template/dist/css/adminlte.min.css">
+    <link rel="icon" href="<?= base_url('uploads/logo/' . $setting['logo']) ?>" type="image/png">
+
     <style>
     .logo-image {
         width: 120px;
@@ -29,7 +31,11 @@
 <body class="hold-transition login-page">
     <div class="login-box">
 
-
+    <?php if (isset($setting['logo'])): ?>
+        <div class="text-center mb-4">
+            <img src="<?= base_url('uploads/logo/' . $setting['logo']) ?>" alt="Logo" style="max-width: 150px;">
+        </div>
+        <?php endif; ?>
         <!-- Text Center Koperasi Primkop -->
         <!-- <div class="text-center">
         <h1>PRIMKOP KARTIKA</h1>

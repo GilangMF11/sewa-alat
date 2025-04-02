@@ -93,18 +93,15 @@ class UserController extends BaseController
     // Menampilkan profil pengguna
     public function profile()
     {
-        // Pastikan ada ID pengguna di session
         $userId = session()->get('user_id');
-         if (!$userId) {
-            return redirect()->to('/login'); // Redirect ke halaman login jika belum login
+        if (!$userId) {
+            return redirect()->to('/login');
         }
-    
-        // Ambil data pengguna berdasarkan ID
+
         $user = $this->userModel->find($userId);
-    
-        // Kirim data pengguna ke view
         return view('Users/profile/v_user_profile', ['user' => $user]);
     }
+
     
         // Fungsi untuk memperbarui profil pengguna
     public function updateProfile()
@@ -141,7 +138,7 @@ class UserController extends BaseController
         $this->userModel->update($userId, $userData);
         session()->setFlashdata('success', 'Profil berhasil diperbarui');
     
-        return redirect()->to('/user/profile');
+        return redirect()->to('/profile');
     }
 
     public function search()
