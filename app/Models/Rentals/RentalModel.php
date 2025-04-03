@@ -34,7 +34,7 @@ class RentalModel extends Model
      */
     public function getRentalsByUser($userId)
     {
-        return $this->where('user_id', $userId)->findAll();
+        return $this->where('id', $userId)->findAll();
     }
 
     /**

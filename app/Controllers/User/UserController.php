@@ -4,15 +4,18 @@ namespace App\Controllers\User;
 
 use App\Controllers\BaseController;
 use App\Models\Users\UserModel;
+use App\Models\Rentals\RentalModel;
 
 class UserController extends BaseController
 {
     protected $userModel;
+    protected $rentalModel;
 
     public function __construct()
     {
         // Inisialisasi model
         $this->userModel = new UserModel();
+        $this->rentalModel = new RentalModel();
     }
 
     public function index()
@@ -152,6 +155,21 @@ class UserController extends BaseController
         }
 
         return $this->response->setJSON([]);
+    }
+
+    // Transaction User
+    public function transaction() {
+        $userId = session()->get('user_id');
+
+        if (!$userId) {
+            return redirect()->to('/login');
+        }
+
+        $rentals = $this->rentalModel->where('id', $userId)->findAll();
+
+        return view('Users/transactions/v_user_transactions', [
+            'rentals' => $rentals
+        ]);
     }
     
 }

@@ -73,9 +73,17 @@
                 <?php if (session()->get('role') === 'user'): ?>
                     <!-- Produk -->
                     <li class="nav-item">
-                        <a href="<?= base_url('product') ?>" class="nav-link">
+                        <a href="<?= base_url('user/products-list') ?>" class="nav-link">
                             <i class="nav-icon fas fa-box"></i>
                             <p>Produk</p>
+                        </a>
+                    </li>
+
+                    <!-- Cart -->
+                    <li class="nav-item">
+                        <a href="<?= base_url('user/cart') ?>" class="nav-link">
+                            <i class="nav-icon fas fa-shopping-cart"></i>
+                            <p>Keranjang</p>
                         </a>
                     </li>
 

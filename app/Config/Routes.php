@@ -81,6 +81,15 @@ $routes->group('', ['filter' => 'auth'], function($routes) {
         $routes->post('update', 'UserController::updateProfile');
     });
 
+    $routes->group('user', ['namespace' => 'App\Controllers\User'], function($routes) {
+        $routes->get('transactions/', 'UserController::transaction');
+    });
+
+    $routes->group('user', ['namespace' => 'App\Controllers\Product'], function($routes) {
+        // Users
+        $routes->get('products-list', 'ProductController::productAll');
+    });
+
 });
 
 

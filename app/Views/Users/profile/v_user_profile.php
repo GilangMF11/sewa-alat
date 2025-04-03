@@ -37,7 +37,7 @@
                         </div>
                         <div class="form-group">
                             <label>Email</label>
-                            <input type="email" name="email" class="form-control" value="<?= esc($user['email']) ?>" required>
+                            <input type="email" name="email" class="form-control" value="<?= esc($user['email']) ?>" readonly required>
                         </div>
                         <div class="form-group">
                             <label>No Telepon</label>
