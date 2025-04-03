@@ -75,16 +75,17 @@
                     <!-- Filter Form End -->
 
                     <!-- Table -->
-                    <table class="table table-bordered" id="example1">
+                    <table class="table table-bordered table-striped table-hover" id="example1">
                         <thead>
                             <tr>
                                 <th>No</th>
                                 <th>ID Transaksi</th>
+                                <th>Nama Penyewa</th>
                                 <th>Tanggal Pinjam</th>
-                                <th>Tanggal Kembali</th>
-                                <th>Status</th>
+                                <th>Status Sewa</th>
                                 <th>Jumlah</th>
                                 <th>Total Harga</th>
+                                <th>Status Pembayaran</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -93,17 +94,24 @@
                             <tr>
                                 <td><?= $no++ ?></td>
                                 <td><?= esc($rental['transaction_code']) ?></td>
+                                <td><?= esc($rental['customer_name']) ?></td>
                                 <td><?= esc(date('Y-m-d', strtotime($rental['created_at']))) ?></td>
-                                <td><?= esc($rental['payment_due'] ?? '-') ?></td>
                                 <td>
-                                    <?php if ($rental['return_status'] == 2): ?>
+                                    <?php if ($rental['return_status'] == 1): ?>
                                     <span class="badge badge-success">Sudah Dikembalikan</span>
                                     <?php else: ?>
                                     <span class="badge badge-warning">Belum Dikembalikan</span>
                                     <?php endif; ?>
                                 </td>
-                                <td><?= $rental['item_count'] ?></td
+                                <td><?= $rental['item_count'] ?></td>
                                 <td>Rp. <?= number_format($rental['total_price'], 0, ',', '.') ?></td>
+                                <td>
+                                    <?php if ($rental['payment_status'] == 1): ?>
+                                    <span class="badge badge-success">Lunas</span>
+                                    <?php else: ?>
+                                    <span class="badge badge-warning">Belum Lunas</span>
+                                    <?php endif; ?>
+                                </td>
                                 <td>
                                     <a href="#" class="btn btn-info btn-sm">Detail</a>
                                     <a href="#" class="btn btn-primary btn-sm">Cetak</a>

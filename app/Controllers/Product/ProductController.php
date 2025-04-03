@@ -22,7 +22,7 @@ class ProductController extends BaseController
     public function index()
     {
         $data = [
-            'products' => $this->productModel->getItemsWithCategory(), // mengambil produk dengan kategori
+            'products' => $this->productModel->orderBy('name', 'asc')->getItemsWithCategory(), // mengambil produk dengan kategori
             'categories' => $this->categoryModel->orderBy('name', 'asc')->findAll(),
         ];
         return view('Admin/product/v_product', $data);

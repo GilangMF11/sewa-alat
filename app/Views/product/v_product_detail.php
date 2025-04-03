@@ -37,6 +37,22 @@
             visibility: hidden;
         }
     }
+
+    .dropdown-menu {
+        display: none;
+        position: absolute;
+        right: 0;
+        margin-top: 0.5rem;
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 999;
+    }
+
+    .dropdown-menu.show {
+        display: block;
+    }
     </style>
 </head>
 
@@ -50,8 +66,28 @@
                 <h1 class="text-2xl font-bold text-blue-600">Ngesti Gongso Kemojing</h1>
             </a>
 
-            <a href="/login"><button
-                    class="hidden md:inline-block bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">Masuk</button></a>
+            <?php if (session()->get('isLoggedIn')): ?>
+            <div class="relative">
+                <button id="userDropdownToggle" class="text-3xl text-blue-700 focus:outline-none">
+                    <i class="fas fa-user-circle"></i>
+                </button>
+                <div id="userDropdownMenu" class="dropdown-menu">
+                    <a href="<?= base_url('/dashboard') ?>"
+                        class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Dashboard</a>
+                    <a href="<?= base_url('/cart') ?>"
+                        class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Keranjang</a>
+                    <a href="<?= base_url('/logout') ?>"
+                        class="block px-4 py-2 text-red-600 hover:bg-gray-100">Logout</a>
+                </div>
+            </div>
+            <?php else: ?>
+            <a href="<?= base_url('/login') ?>">
+                <button
+                    class="hidden md:inline-block bg-blue-700 text-white py-2 px-6 rounded-lg hover:bg-blue-800 transition duration-300">
+                    Masuk
+                </button>
+            </a>
+            <?php endif; ?>
         </div>
     </header>
 
@@ -149,3 +185,20 @@
 </body>
 
 </html>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const toggle = document.getElementById('userDropdownToggle');
+    const menu = document.getElementById('userDropdownMenu');
+
+    if (toggle && menu) {
+        document.addEventListener('click', function(e) {
+            if (toggle.contains(e.target)) {
+                menu.classList.toggle('show');
+            } else if (!menu.contains(e.target)) {
+                menu.classList.remove('show');
+            }
+        });
+    }
+});
+</script>

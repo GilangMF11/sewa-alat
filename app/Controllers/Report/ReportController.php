@@ -19,7 +19,11 @@ class ReportController extends BaseController
 
     public function index()
     {
-        $rentals = $this->rentalModel->orderBy('created_at', 'DESC')->findAll();
+        $rentals = $this->rentalModel
+                    ->where('payment_status', 0)
+                    ->where('return_status', 0)
+                    ->orderBy('created_at', 'DESC')
+                    ->findAll();
 
         // Hitung total item per transaksi
         foreach ($rentals as &$rental) {

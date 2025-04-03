@@ -52,6 +52,14 @@ $routes->group('', ['filter' => 'auth'], function($routes) {
         $routes->get('delete/(:segment)', 'TransactionController::delete/$1');
     });
 
+    // Rental Status
+    $routes->group('rental-status', ['namespace' => 'App\Controllers\Rental'], function($routes) {
+        // Rental-Status
+        $routes->get('/', 'RentalStatusController::index');
+        $routes->get('detail/(:segment)', 'RentalStatusController::detail/$1');
+        $routes->post('update', 'RentalStatusController::updateStatus');
+    });
+
     // User
     $routes->group('user', ['namespace' => 'App\Controllers\User'], function($routes) {
         $routes->get('/', 'UserController::index');
@@ -89,6 +97,9 @@ $routes->group('', ['filter' => 'auth'], function($routes) {
         // Users
         $routes->get('products-list', 'ProductController::productAll');
     });
+
+
+    
 
 });
 

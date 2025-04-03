@@ -152,9 +152,6 @@
     </section>
 </div>
 
-<!-- Tambahkan FontAwesome jika belum -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     let itemIndex = 1;
@@ -249,7 +246,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('borrow_date').addEventListener('change', function() {
         const borrowDate = new Date(this.value);
         if (!isNaN(borrowDate.getTime())) {
-            borrowDate.setDate(borrowDate.getDate() + 3);
+            borrowDate.setDate(borrowDate.getDate() + 0);
             document.getElementById('return_date').value = borrowDate.toISOString().split('T')[0];
         }
     });

@@ -80,14 +80,18 @@ class Home extends BaseController
 
     public function showImageHome($filename)
     {
-        $path = WRITEPATH . 'uploads/background/' . $filename;
+        $path = FCPATH . 'uploads/background/' . $filename;
+
+        // if (!is_file($path)) {
+        //     // Bisa redirect ke gambar default atau tampilkan error image
+        //     $path = WRITEPATH . 'uploads/background/default.jpg';
+        //     if (!is_file($path)) {
+        //         throw new \CodeIgniter\Exceptions\PageNotFoundException($filename);
+        //     }
+        // }
 
         if (!is_file($path)) {
-            // Bisa redirect ke gambar default atau tampilkan error image
-            $path = WRITEPATH . 'uploads/background/default.jpg';
-            if (!is_file($path)) {
-                throw new \CodeIgniter\Exceptions\PageNotFoundException($filename);
-            }
+            throw new \CodeIgniter\Exceptions\PageNotFoundException($filename);
         }
 
         $mime = mime_content_type($path);

@@ -74,11 +74,11 @@ class TransactionController extends BaseController
             'total_price' => $discountedPrice ?? 0,
             'address' => $request->getPost('address') ?? '',
             'shipping_cost' => $request->getPost('shipping_cost'),
-            'return_status' => $request->getPost('return_status') ?? 1,
-            'payment_status' => $request->getPost('payment_status') ?? 1,
+            'return_status' => $request->getPost('return_status') ?? 0,
+            'payment_status' => $request->getPost('payment_status') ?? 0,
             'payment_type' => $request->getPost('payment_type') ?? 1,
-            'down_payment' => $request->getPost('down_payment'),
-            'payment_due' => $request->getPost('payment_due'),
+            'down_payment' => $request->getPost('down_payment') ?? null,
+            'payment_due' => $request->getPost('payment_due') ?? null,
             'proof_of_payment' => $proof_of_payment ? $newProof : null,
             'discount' => $discount,
         ];
@@ -110,6 +110,14 @@ class TransactionController extends BaseController
                 'quantity' => $item['quantity'],
                 'price' => str_replace('.', '', $item['price']),
             ]);
+
+            // 🔻 Kurangi stok produk
+            $product = $this->itemModel->find($item['item_id']);
+            if ($product) {
+                $newStock = max(0, $product['stock'] - $item['quantity']); // Hindari negatif
+                $this->itemModel->update($item['item_id'], ['stock' => $newStock]);
+            }
+            
         }
 
         $db->transComplete();

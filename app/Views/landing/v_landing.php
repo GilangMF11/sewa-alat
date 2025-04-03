@@ -45,6 +45,22 @@
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         z-index: 1000;
     }
+
+    .dropdown-menu {
+        display: none;
+        position: absolute;
+        right: 0;
+        margin-top: 0.5rem;
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 999;
+    }
+
+    .dropdown-menu.show {
+        display: block;
+    }
     </style>
 </head>
 
@@ -52,24 +68,50 @@
 
     <!-- Navigation -->
     <header class="bg-white shadow-lg">
+        <!-- Tambahkan tombol hamburger -->
+        <button class="md:hidden text-2xl" id="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+
         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
             <h1 class="text-4xl font-bold text-blue-700">Ngesti Gongso Kemojing</h1>
-            <nav class="hidden md:flex space-x-8">
+            <nav class="hidden md:flex md:space-x-8 flex-col md:flex-row md:items-center" id="mobile-menu">
                 <a href="#" class="text-gray-700 hover:text-blue-700 transition duration-200">Home</a>
                 <a href="#" class="text-gray-700 hover:text-blue-700 transition duration-200">Tentang Kami</a>
                 <a href="#" class="text-gray-700 hover:text-blue-700 transition duration-200">Galeri</a>
                 <a href="#" class="text-gray-700 hover:text-blue-700 transition duration-200">Kontak</a>
             </nav>
-            <a href="<?php echo base_url('/login'); ?>">
+
+            <?php if (session()->get('isLoggedIn')): ?>
+            <div class="relative">
+                <button id="userDropdownToggle" class="text-3xl text-blue-700 focus:outline-none">
+                    <i class="fas fa-user-circle"></i>
+                </button>
+                <div id="userDropdownMenu" class="dropdown-menu">
+                    <a href="<?= base_url('/dashboard') ?>"
+                        class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Dashboard</a>
+                    <a href="<?= base_url('/cart') ?>"
+                        class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Keranjang</a>
+                    <a href="<?= base_url('/logout') ?>"
+                        class="block px-4 py-2 text-red-600 hover:bg-gray-100">Logout</a>
+                </div>
+            </div>
+            <?php else: ?>
+            <a href="<?= base_url('/login') ?>">
                 <button
-                    class="hidden md:inline-block bg-blue-700 text-white py-2 px-6 rounded-lg hover:bg-blue-800 transition duration-300">Masuk</button>
+                    class="hidden md:inline-block bg-blue-700 text-white py-2 px-6 rounded-lg hover:bg-blue-800 transition duration-300">
+                    Masuk
+                </button>
             </a>
+            <?php endif; ?>
+
+
         </div>
     </header>
 
     <!-- Hero Section with Parallax -->
     <?php
-    $bgImage = base_url('show/image/' . ($setting['background'] ?? 'default.jpg'));
+    $bgImage = base_url('show/image/' . ($setting['background'] ?? ''));
 ?>
     <section class="parallax h-screen flex items-center justify-center"
         style="background-image: url('<?= $bgImage ?>');">
@@ -183,4 +225,24 @@
 
 </body>
 
+
+
+
 </html>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggle = document.getElementById('userDropdownToggle');
+        const menu = document.getElementById('userDropdownMenu');
+
+        if (toggle && menu) {
+            document.addEventListener('click', function (e) {
+                if (toggle.contains(e.target)) {
+                    menu.classList.toggle('show');
+                } else if (!menu.contains(e.target)) {
+                    menu.classList.remove('show');
+                }
+            });
+        }
+    });
+</script>

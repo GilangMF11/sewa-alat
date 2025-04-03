@@ -44,6 +44,14 @@
                         </a>
                     </li>
 
+                    <!-- Status Sewa -->
+                    <li class="nav-item">
+                        <a href="<?= base_url('rental-status') ?>" class="nav-link">
+                            <i class="nav-icon fas fa-history"></i>
+                            <p>Status Sewa</p>
+                        </a>
+                    </li>
+
                     <!-- Pengguna -->
                     <li class="nav-item">
                         <a href="<?= base_url('user') ?>" class="nav-link">
