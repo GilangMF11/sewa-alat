@@ -7,18 +7,21 @@ use CodeIgniter\HTTP\ResponseInterface;
 use App\Models\Rentals\RentalModel;
 use App\Models\Rentals\RentalItemModel;
 use App\Models\Settings\SettingModel;
+use App\Models\Items\ItemModel;
 
 class RentalStatusController extends BaseController
 {
     protected $rentalModel;
     protected $rentalItemModel;
     protected $setting;
+    protected $itemModel;
 
     public function __construct()
     {
         $this->rentalModel = new RentalModel();
         $this->rentalItemModel = new RentalItemModel();
         $this->setting = new SettingModel();
+        $this->itemModel = new ItemModel();
     }
     public function index()
     {
@@ -91,6 +94,14 @@ class RentalStatusController extends BaseController
         $id = $this->request->getPost('id');
         $payment_status = $this->request->getPost('payment_status');
         $return_status = $this->request->getPost('return_status');
+        $shipping_cost = $this->request->getPost('shipping_cost');
+        $proof_of_payment = $this->request->getFile('proof_of_payment');
+        $total_price = $this->request->getPost('total_price');
+
+        if ($proof_of_payment && $proof_of_payment->isValid()) {
+            $newProof = $proof_of_payment->getRandomName();
+            $proof_of_payment->move(WRITEPATH . 'uploads/payments', $newProof);
+        }
     
         // Pastikan ID valid dan tidak kosong
         if (!$id) {
@@ -100,7 +111,10 @@ class RentalStatusController extends BaseController
         // Melakukan update pada rental berdasarkan ID yang valid
         $updateData = [
             'payment_status' => $payment_status,
-            'return_status' => $return_status
+            'return_status' => $return_status,
+            'shipping_cost' => $shipping_cost,
+            'total_price' => $total_price,
+            'proof_of_payment' => $proof_of_payment ? $newProof : null
         ];
     
         // Memastikan bahwa update dilakukan pada data yang valid
@@ -110,8 +124,22 @@ class RentalStatusController extends BaseController
         if ($result === false) {
             return redirect()->back()->with('errors', 'Gagal memperbarui status');
         }
+
+        // 🔥 Tambahkan ini: Update stok barang kalau return_status == 1
+        if ($return_status == 1) {
+            $rentalItems = $this->rentalItemModel
+                            ->where('rental_id', $id)
+                            ->findAll();
+        
+            foreach ($rentalItems as $item) {
+                $this->itemModel->where('id', $item['item_id'])
+                ->increment('stock', (int) $item['quantity']);
+
+            }
+        }
+        
     
-        return redirect()->to('/report')->with('success', 'Status berhasil diperbarui.');
+        return redirect()->to('/rental-status')->with('success', 'Status berhasil diperbarui.');
     }
     
     public function print($id)

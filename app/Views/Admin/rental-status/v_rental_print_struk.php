@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Cetak Struk</title>
+    <title>Cetak Struk | <?= esc($rental['transaction_code']) ?></title>
     <link rel="icon" href="<?= base_url('uploads/logo/' . $setting['logo']) ?>" type="image/png">
 
     <style>
@@ -63,12 +63,26 @@
     <hr>
     <table>
         <tr>
+            <td>DP</td>
+            <td class="text-right"><?= esc($rental['down_payment']) ?></td>
+        </tr>
+        <tr>
             <td>Ongkir</td>
             <td class="text-right"><?= esc($rental['shipping_cost']) ?></td>
         </tr>
         <tr>
             <td>Diskon</td>
             <td class="text-right"><?= esc($rental['discount']) ?></td>
+        </tr>
+        <tr>
+            <td>Status</td>
+            <td class="text-right">
+            <?php if ($rental['payment_status'] == 1): ?>
+                                    <span class="badge badge-success">Lunas</span>
+                                    <?php else: ?>
+                                    <span class="badge badge-warning">Belum Lunas</span>
+                                    <?php endif; ?>
+            </td>
         </tr>
     </table>
 

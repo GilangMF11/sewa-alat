@@ -27,15 +27,16 @@
                     <h3 class="card-title font-weight-bold">Laporan Transaksi Sewa Barang</h3>
                 </div>
                 <div class="card-body">
-                    
+
                     <!-- Filter Form -->
-                    <form method="get" action="<?= base_url('report') ?>" class="form-inline mb-3">
-                        <select class="form-control mr-2" name="status">
+                    <form method="get" action="<?= base_url('report') ?>" class="form-inline mb-3" id="filterForm">
+                        <select class="form-control mr-2" name="status" id="filterStatus">
                             <option value="">Pilih Status</option>
                             <option value="1" <?= ($_GET['status'] ?? '') == '1' ? 'selected' : '' ?>>Sudah Dikembalikan</option>
                             <option value="0" <?= ($_GET['status'] ?? '') == '0' ? 'selected' : '' ?>>Belum Dikembalikan</option>
                         </select>
-                        <select class="form-control mr-2" name="bulan">
+
+                        <select class="form-control mr-2" name="bulan" id="filterBulan">
                             <option value="">Pilih Bulan</option>
                             <?php 
                             $bulan = [
@@ -50,7 +51,8 @@
                             }
                             ?>
                         </select>
-                        <select class="form-control mr-2" name="tahun">
+
+                        <select class="form-control mr-2" name="tahun" id="filterTahun">
                             <option value="">Pilih Tahun</option>
                             <?php
                             $tahun = [2025, 2024, 2023, 2022];
@@ -60,13 +62,26 @@
                             }
                             ?>
                         </select>
-                        <button class="btn btn-primary">Cari</button>
+
+                        <button type="submit" class="btn btn-primary">Cari</button>
                     </form>
 
                     <!-- Export Buttons -->
                     <div class="text-right mb-3">
-                        <a href="<?= base_url('report/export-pdf') ?>" class="btn btn-danger">Export PDF</a>
-                        <a href="<?= base_url('report/export-excel') ?>" class="btn btn-success">Export Excel</a>
+                    <form action="<?= base_url('report/export-pdf') ?>" method="get" target="_blank" style="display: inline;">
+    <input type="hidden" name="status" value="<?= esc($_GET['status'] ?? '') ?>">
+    <input type="hidden" name="bulan" value="<?= esc($_GET['bulan'] ?? '') ?>">
+    <input type="hidden" name="tahun" value="<?= esc($_GET['tahun'] ?? '') ?>">
+    <button type="submit" class="btn btn-danger">Export PDF</button>
+</form>
+
+<form action="<?= base_url('report/export-excel') ?>" method="get" target="_blank" style="display: inline;">
+    <input type="hidden" name="status" value="<?= esc($_GET['status'] ?? '') ?>">
+    <input type="hidden" name="bulan" value="<?= esc($_GET['bulan'] ?? '') ?>">
+    <input type="hidden" name="tahun" value="<?= esc($_GET['tahun'] ?? '') ?>">
+    <button type="submit" class="btn btn-success">Export Excel</button>
+</form>
+
                     </div>
 
                     <!-- Table -->
@@ -121,13 +136,8 @@
     </section>
 </div>
 
-<!-- Javascript -->
-<script>
-$(document).ready(function() {
-    $('#example1').DataTable();
-});
-</script>
 
+<!-- Style -->
 <style>
 .custom-header-bg {
     background-color: #4caf50;

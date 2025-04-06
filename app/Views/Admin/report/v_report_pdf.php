@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Laporan Transaksi Sewa</title>
-
     <link rel="icon" href="<?= base_url('uploads/logo/' . $setting['logo']) ?>" type="image/png">
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -88,3 +88,5 @@
 
 </body>
 </html>
+
+

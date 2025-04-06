@@ -29,6 +29,8 @@ $routes->get('user/search', 'User\UserController::search');
 // app/Config/Routes.php
 
 $routes->group('', ['filter' => 'auth'], function($routes) {
+
+    $routes->get('/show/payment/(:any)', 'Home::showImageProofOfPayments/$1');
     $routes->get('/dashboard', 'Dashboard\DashboardController::index');
 
     // category

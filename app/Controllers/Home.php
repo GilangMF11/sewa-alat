@@ -115,4 +115,18 @@ class Home extends BaseController
         readfile($path);
         exit;
     }
+
+    public function showImageProofOfPayments($filename)
+    {
+        $path = WRITEPATH . 'uploads/payments/' . $filename;
+
+        if (!is_file($path)) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException($filename);
+        }
+
+        $mime = mime_content_type($path);
+        header("Content-Type: " . $mime);
+        readfile($path);
+        exit;
+    }
 }

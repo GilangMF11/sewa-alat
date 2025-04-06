@@ -80,7 +80,7 @@
                             <button class="btn btn-primary ml-2">Cari</button>
                         </form>
 
-                        
+
                     </div>
                     <!-- Filter Form End -->
 
@@ -110,26 +110,46 @@
                                 <td><?= esc(date('Y-m-d', strtotime($rental['created_at']))) ?></td>
                                 <td>
                                     <?php if ($rental['return_status'] == 1): ?>
-                                    <span class="badge badge-success">Sudah Dikembalikan</span>
+                                    <span class="badge badge-success">Selesai</span>
                                     <?php else: ?>
-                                    <span class="badge badge-warning">Belum Dikembalikan</span>
+                                    <span class="badge badge-warning">Proses</span>
                                     <?php endif; ?>
                                 </td>
                                 <td><?= $rental['item_count'] ?></td>
-                                <td>Rp. <?= number_format($rental['down_payment'], 0, ',', '.') ?></td>
+
                                 <td>Rp. <?= number_format($rental['shipping_cost'], 0, ',', '.') ?></td>
+                                <td>Rp. <?= number_format($rental['down_payment'], 0, ',', '.') ?></td>
                                 <td>Rp. <?= number_format($rental['total_price'], 0, ',', '.') ?></td>
                                 <td>
-                                    <?php if ($rental['payment_status'] == 1): ?>
+                                    <?php if ($rental['payment_status'] == 2): ?>
+                                    <span class="badge badge-warning">Pending</span>
+                                    <!-- Pending pakai warna warning -->
+                                    <?php elseif ($rental['payment_status'] == 1): ?>
                                     <span class="badge badge-success">Lunas</span>
                                     <?php else: ?>
-                                    <span class="badge badge-warning">Belum Lunas</span>
+                                    <span class="badge badge-danger">Belum Lunas</span>
+                                    <!-- Belum Lunas lebih cocok warna merah -->
                                     <?php endif; ?>
                                 </td>
+
                                 <td>
                                     <button class="btn btn-info btn-sm btn-detail" data-toggle="modal"
-                                        data-target="#modalUpdate" data-id="<?= $rental['id'] ?>">Detail</button>
-                                        <a href="<?= base_url('rental-status/print/' . $rental['id']) ?>" class="btn btn-primary btn-sm" target="_blank">Cetak</a>
+                                        data-target="#modalUpdate" data-id="<?= $rental['id'] ?>"
+                                        data-payment_status="<?= $rental['payment_status'] ?>"
+                                        data-return_status="<?= $rental['return_status'] ?>"
+                                        data-customer_name="<?= $rental['customer_name'] ?>"
+                                        data-total_price="<?= $rental['total_price'] ?>"
+                                        data-proof_of_payment="<?= $rental['proof_of_payment'] ?>"
+                                        data-down_payment="<?= $rental['down_payment'] ?>"
+                                        data-discount="<?= esc($rental['discount']) ?>"
+                                        data-shipping_cost="<?= esc($rental['shipping_cost']) ?>"
+                                        data-borrow_date="<?= esc($rental['items'][0]['borrow_date']) ?>"
+                                        data-return_date="<?= esc($rental['items'][0]['return_date']) ?>">
+                                        Detail
+                                    </button>
+
+                                    <a href="<?= base_url('rental-status/print/' . $rental['id']) ?>"
+                                        class="btn btn-primary btn-sm" target="_blank">Cetak</a>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
@@ -141,6 +161,7 @@
                         <div class="modal-dialog modal-lg">
                             <form action="<?= base_url('rental-status/update') ?>" method="post">
                                 <?= csrf_field() ?>
+                                <input type="hidden" name="id" id="rental_id">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h5 class="modal-title">Detail Transaksi</h5>
@@ -148,6 +169,8 @@
                                     </div>
                                     <div class="modal-body">
                                         <!-- Tampilkan Data Transaksi -->
+                                        <input type="hidden" name="total_price" id="total_price">
+
                                         <div class="form-group">
                                             <label for="transaction_code">ID Transaksi</label>
                                             <input type="text" class="form-control" id="transaction_code"
@@ -159,27 +182,24 @@
                                                 value="<?= esc($rental['customer_name']) ?>" disabled>
                                         </div>
                                         <div class="form-group">
-                                            <label for="total_price">Total Harga</label>
-                                            <input type="text" class="form-control" id="total_price"
-                                                value="Rp. <?= number_format($rental['total_price'], 0, ',', '.') ?>"
-                                                disabled>
-                                        </div>
-                                        <div class="form-group">
                                             <label for="address">Alamat</label>
                                             <input type="text" class="form-control" id="address"
                                                 value="<?= esc($rental['address']) ?>" disabled>
                                         </div>
                                         <div class="form-group">
-                                            <label for="shipping_cost">Biaya Pengiriman</label>
-                                            <input type="text" class="form-control" id="shipping_cost"
-                                                value="Rp. <?= number_format($rental['shipping_cost'], 0, ',', '.') ?>"
-                                                disabled>
+                                            <label for="shipping_cost">Ongkir</label>
+                                            <input type="number" class="form-control" id="shipping_cost"
+                                                name="shipping_cost" value="<?= esc($rental['shipping_cost']) ?>">
+
                                         </div>
 
                                         <!-- Dropdown untuk Status Pembayaran dan Sewa -->
                                         <div class="form-group">
                                             <label for="payment_status">Status Pembayaran</label>
                                             <select name="payment_status" class="form-control" id="payment_status">
+                                                <option value="2"
+                                                    <?= $rental['payment_status'] == 2 ? 'selected' : '' ?>>Pending
+                                                </option>
                                                 <option value="1"
                                                     <?= $rental['payment_status'] == 1 ? 'selected' : '' ?>>Lunas
                                                 </option>
@@ -202,7 +222,7 @@
 
                                         <!-- Tampilkan Barang yang Disewa -->
                                         <h5>Barang yang Disewa</h5>
-                                        <table class="table table-bordered">
+                                        <table class="table table-bordered" id="itemsDetailTable">
                                             <thead>
                                                 <tr>
                                                     <th>Nama Barang</th>
@@ -219,15 +239,56 @@
                                                     <td><?= esc($item['quantity']) ?></td>
                                                     <td><?= esc(date('Y-m-d', strtotime($item['borrow_date']))) ?></td>
                                                     <td><?= esc(date('Y-m-d', strtotime($item['return_date']))) ?></td>
-                                                    <td>Rp. <?= number_format($item['price'], 0, ',', '.') ?></td>
+                                                    <td class="item-price">Rp.
+                                                        <?= number_format($item['price'], 0, ',', '.') ?></td>
+                                                    <!-- ✅ tambahkan class -->
                                                 </tr>
                                                 <?php endforeach; ?>
                                             </tbody>
+                                            <!-- 🔥 Ini baris baru untuk total -->
+                                            <tfoot>
+                                                <tr>
+                                                    <th colspan="4" class="text-right">Total Harga Barang:</th>
+                                                    <th id="totalItemsPrice">Rp. 0</th>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="4" class="text-right">Diskon</th>
+                                                    <th id="diskonValue">Rp. 0</th> <!-- 🔥 kasih ID -->
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="4" class="text-right">Ongkir</th>
+                                                    <th id="ongkirValue">Rp. 0</th> <!-- 🔥 kasih ID -->
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="4" class="text-right">Total</th>
+                                                    <th id="totalHargaSemua">Rp. 0</th> <!-- 🔥 kasih ID ini buat JS -->
+                                                </tr>
+                                            </tfoot>
+
+
+
                                         </table>
+
+
+                                        <div class="form-group text-center">
+                                            <label>Bukti Transfer</label><br>
+
+                                            <!-- Tempat gambar -->
+                                            <img id="proof_of_payment_img"
+                                                src="<?= base_url('show/payment/' . $rental['proof_of_payment']) ?>"
+                                                alt="Bukti Transfer" class="img-fluid rounded mb-2"
+                                                style="max-height: 600px; object-fit: cover; display: none;">
+
+                                            <!-- Input Upload (hanya muncul kalau gambar tidak ada) -->
+                                            <input type="file" name="proof_of_payment" class="form-control-file mt-2"
+                                                id="uploadProofInput" style="display: none;" accept="image/*">
+                                        </div>
+
+
 
                                     </div>
                                     <div class="modal-footer">
-                                        <button class="btn btn-success">Simpan Perubahan</button>
+                                        <button type="submit" class="btn btn-success">Simpan Perubahan</button>
                                         <button type="button" class="btn btn-secondary"
                                             data-dismiss="modal">Tutup</button>
                                     </div>
@@ -246,7 +307,44 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Modal Update
+    function getRentalDays(borrowDateStr, returnDateStr) {
+        var borrowDate = new Date(borrowDateStr);
+        var returnDate = new Date(returnDateStr);
+
+        if (isNaN(borrowDate) || isNaN(returnDate)) {
+            return 1;
+        }
+
+        var timeDiff = returnDate.getTime() - borrowDate.getTime();
+        var days = Math.floor(timeDiff / (1000 * 3600 * 24)) + 1;
+
+        return days > 0 ? days : 1;
+    }
+
+
+    function calculateTotalItemPrice(rentalDays, discount, shippingCost) {
+        let total = 0;
+
+        $('#itemsDetailTable tbody tr').each(function() {
+            const priceText = $(this).find('.item-price').text().replace(/[Rp.\s]/g, '').replace(',',
+                '');
+            const price = parseFloat(priceText) || 0;
+            total += price;
+        });
+
+        const totalBarang = total * rentalDays;
+        const finalTotal = (totalBarang - discount) + shippingCost;
+
+        // Update tampilan di <tfoot>
+        $('#totalItemsPrice').text("Rp. " + totalBarang.toLocaleString('id-ID') + " x " + rentalDays + " hari");
+        $('#diskonValue').text("Rp. - " + discount.toLocaleString('id-ID')); // 🔥 update diskon
+        $('#ongkirValue').text("Rp. + " + shippingCost.toLocaleString('id-ID')); // 🔥 update ongkir
+        $('#totalHargaSemua').text("Rp. " + finalTotal.toLocaleString('id-ID')); // 🔥 update total semua
+        // 🔥 Ini yang WAJIB ditambahkan agar total_price dikirim ke server
+    $('#total_price').val(finalTotal); 
+    }
+
+
     $('#modalUpdate').on('show.bs.modal', function(event) {
         var button = $(event.relatedTarget);
         var id = button.data('id');
@@ -254,14 +352,71 @@ document.addEventListener('DOMContentLoaded', function() {
         var return_status = button.data('return_status');
         var customer_name = button.data('customer_name');
         var total_price = button.data('total_price');
+        var proof_of_payment = button.data('proof_of_payment');
+        var down_payment = button.data('down_payment');
+        var discount = parseFloat(button.data('discount')) || 0;
+        var shippingCost = parseFloat(button.data('shipping_cost')) || 0;
+
+
+        // 🔥 ini yang harus ditambahkan
+        var borrow_date = button.data('borrow_date');
+        var return_date = button.data('return_date');
 
         var modal = $(this);
-        modal.find('.modal-body #modal-id').val(id);
-        modal.find('.modal-body #modal-status_sewa').val(return_status);
-        modal.find('.modal-body #modal-status_pembayaran').val(payment_status);
-        modal.find('.modal-body #modal-total_price').val(total_price);
+
+        if (proof_of_payment) {
+            $('#proof_of_payment_img').attr('src', '<?= base_url('show/payment/') ?>' +
+                proof_of_payment).show();
+            $('#uploadProofInput').hide();
+        } else {
+            $('#proof_of_payment_img').hide();
+            $('#uploadProofInput').show();
+        }
+
+        modal.find('#rental_id').val(id);
+        modal.find('#payment_status').val(payment_status);
+        modal.find('#return_status').val(return_status);
+        modal.find('#customer_name').val(customer_name);
+        //modal.find('#total_price').val("Rp. " + new Intl.NumberFormat('id-ID').format(total_price));
+        modal.find('#total_price').val(total_price);
+        modal.find('#proof_of_payment').val(proof_of_payment);
+        modal.find('#down_payment').val("Rp. " + new Intl.NumberFormat('id-ID').format(down_payment));
+        modal.find('#discount').val("Rp. " + discount.toLocaleString('id-ID'));
+        //modal.find('#shipping_cost').val("Rp. " + shippingCost.toLocaleString('id-ID'));
+        modal.find('#shipping_cost').val(shippingCost);
+
+
+
+        // ✅ ini baru benar
+        var rentalDays = getRentalDays(borrow_date, return_date);
+
+        // yang ini ubah
+        calculateTotalItemPrice(rentalDays, discount, shippingCost);
+
     });
+
+
+    // Menampilkan SweetAlert2 setelah Insert/Update/Delete
+    <?php if (session()->getFlashdata('success')): ?>
+    Swal.fire({
+        icon: 'success',
+        title: 'Berhasil!',
+        text: '<?= session()->getFlashdata('success'); ?>',
+    });
+    <?php endif; ?>
+
+    <?php if (session()->getFlashdata('error')): ?>
+    Swal.fire({
+        icon: 'error',
+        title: 'Gagal!',
+        text: '<?= session()->getFlashdata('error'); ?>',
+    });
+    <?php endif; ?>
+
+
+
 });
+
 $(document).ready(function() {
     // Filter button action
     $('#filterBtn').on('click', function() {

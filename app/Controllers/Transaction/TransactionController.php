@@ -64,7 +64,9 @@ class TransactionController extends BaseController
         // Discount
         $discount = $request->getPost('discount');
         $totalPrice = $request->getPost('total_price');
-        $discountedPrice = $totalPrice - $discount;
+        $shippingCost = $request->getPost('shipping_cost');
+        // Total akhir = harga semua barang + biaya kirim - diskon
+        $discountedPrice = ($totalPrice + $shippingCost) - $discount;
 
 
         $rentalData = [
@@ -73,7 +75,7 @@ class TransactionController extends BaseController
             'customer_name' => $customerName,
             'total_price' => $discountedPrice ?? 0,
             'address' => $request->getPost('address') ?? '',
-            'shipping_cost' => $request->getPost('shipping_cost'),
+            'shipping_cost' => $shippingCost,
             'return_status' => $request->getPost('return_status') ?? 0,
             'payment_status' => $request->getPost('payment_status') ?? 0,
             'payment_type' => $request->getPost('payment_type') ?? 1,

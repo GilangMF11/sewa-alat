@@ -201,11 +201,29 @@ document.addEventListener('DOMContentLoaded', function() {
         const selectedOption = selectElement.options[selectElement.selectedIndex];
         const unitPrice = selectedOption ? parseInt(selectedOption.getAttribute('data-price')) || 0 : 0;
         const quantity = parseInt(quantityInput.value) || 1;
-        const totalPrice = unitPrice * quantity;
+        const days = getDaysCount(); // Tambahan ini
+        const totalPrice = unitPrice * quantity * days; // Harga dikali jumlah hari
 
         priceInput.value = formatCurrency(totalPrice);
         updateTotalPrice();
     };
+
+
+    function getDaysCount() {
+
+        const borrowDate = new Date(document.getElementById('borrow_date').value);
+        const returnDate = new Date(document.getElementById('return_date').value);
+
+        if (isNaN(borrowDate.getTime()) || isNaN(returnDate.getTime())) {
+            return 1; // Default 1 hari
+        }
+
+        const diffTime = returnDate.getTime() - borrowDate.getTime();
+        let days = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1; // Selisih + 1 hari
+
+        return days > 0 ? days : 1;
+    }
+
 
     // Hitung total harga semua barang
     function updateTotalPrice() {
@@ -217,11 +235,14 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         const discount = parseFloat(document.getElementById('discount').value) || 0;
-        const finalPrice = totalPrice - discount;
+        const shippingCost = parseFloat(document.getElementById('shipping_cost').value) || 0;
+
+        const finalPrice = totalPrice + shippingCost - discount;
 
         document.getElementById('total_price_display').value = formatCurrency(finalPrice);
         document.getElementById('total_price').value = finalPrice;
     }
+
 
 
     function formatCurrency(value) {
@@ -250,6 +271,36 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('return_date').value = borrowDate.toISOString().split('T')[0];
         }
     });
+
+    // Menampilkan SweetAlert2 setelah Insert/Update/Delete
+    <?php if (session()->getFlashdata('success')): ?>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: '<?= session()->getFlashdata('success'); ?>',
+                });
+    <?php endif; ?>
+
+    <?php if (session()->getFlashdata('error')): ?>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: '<?= session()->getFlashdata('error'); ?>',
+                });
+    <?php endif; ?>
+
+    document.getElementById('borrow_date').addEventListener('change', updateAllItemPrices);
+    document.getElementById('return_date').addEventListener('change', updateAllItemPrices);
+
+    function updateAllItemPrices() {
+        document.querySelectorAll('.item-select').forEach(select => {
+            updateItemPrice(select);
+        });
+    }
+    document.getElementById('shipping_cost').addEventListener('input', updateTotalPrice);
+    document.getElementById('discount').addEventListener('input', updateTotalPrice);
+
+
 });
 </script>
 
