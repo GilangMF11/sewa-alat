@@ -94,14 +94,22 @@ $routes->group('', ['filter' => 'auth'], function($routes) {
         $routes->post('update', 'UserController::updateProfile');
     });
 
+    // Cart
+    $routes->group('user', ['namespace' => 'App\Controllers\Cart'], function($routes) {
+        $routes->get('cart/', 'CartController::index');
+    });
+
+    // Transaction
     $routes->group('user', ['namespace' => 'App\Controllers\User'], function($routes) {
         $routes->get('transactions/', 'UserController::transaction');
     });
 
+    // Product
     $routes->group('user', ['namespace' => 'App\Controllers\Product'], function($routes) {
         // Users
         $routes->get('products-list', 'ProductController::productAll');
     });
+
 
 
     

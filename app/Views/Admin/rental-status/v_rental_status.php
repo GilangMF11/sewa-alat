@@ -33,7 +33,7 @@
                     <div class="row mb-3">
                         <form method="get" action="<?= base_url('rental-status') ?>" class="form-inline">
                             <select name="status" class="form-control">
-                                <option value="">Status</option>
+                                <option value="">Status Sewa</option>
                                 <option value="1" <?= ($_GET['status'] ?? '') == '1' ? 'selected' : '' ?>>Sudah
                                     Dikembalikan</option>
                                 <option value="0" <?= ($_GET['status'] ?? '') == '0' ? 'selected' : '' ?>>Belum
@@ -85,30 +85,30 @@
                     <!-- Filter Form End -->
 
                     <!-- Tabel -->
-                    <table class="table table-bordered table-striped table-hover" id="example1">
-                        <thead>
+                    <table class="table table-bordered table-striped table-hover" id="example1" style="font-size: 12px;">
+                        <thead class="text-center">
                             <tr>
                                 <th>No</th>
                                 <th>ID Transaksi</th>
                                 <th>Penyewa</th>
                                 <th>Tanggal Pinjam</th>
                                 <th>Status Sewa</th>
-                                <th>Jumlah</th>
+                                <th>Qty</th>
                                 <th>Ongkir</th>
                                 <th>DP</th>
                                 <th>Total</th>
-                                <th>Status</th>
+                                <th>Pembayaran</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php $no = 1; foreach ($rentals as $rental): ?>
                             <tr>
-                                <td><?= $no++ ?></td>
+                                <td class="text-center"><?= $no++ ?></td>
                                 <td><?= esc($rental['transaction_code']) ?></td>
                                 <td><?= esc($rental['customer_name']) ?></td>
                                 <td><?= esc(date('Y-m-d', strtotime($rental['created_at']))) ?></td>
-                                <td>
+                                <td class="text-center" >
                                     <?php if ($rental['return_status'] == 1): ?>
                                     <span class="badge badge-success">Selesai</span>
                                     <?php else: ?>
@@ -120,7 +120,7 @@
                                 <td>Rp. <?= number_format($rental['shipping_cost'], 0, ',', '.') ?></td>
                                 <td>Rp. <?= number_format($rental['down_payment'], 0, ',', '.') ?></td>
                                 <td>Rp. <?= number_format($rental['total_price'], 0, ',', '.') ?></td>
-                                <td>
+                                <td class="text-center">
                                     <?php if ($rental['payment_status'] == 2): ?>
                                     <span class="badge badge-warning">Pending</span>
                                     <!-- Pending pakai warna warning -->
@@ -133,6 +133,7 @@
                                 </td>
 
                                 <td>
+                                    <!-- Tombol Detail -->
                                     <button class="btn btn-info btn-sm btn-detail" data-toggle="modal"
                                         data-target="#modalUpdate" data-id="<?= $rental['id'] ?>"
                                         data-payment_status="<?= $rental['payment_status'] ?>"
@@ -145,12 +146,16 @@
                                         data-shipping_cost="<?= esc($rental['shipping_cost']) ?>"
                                         data-borrow_date="<?= esc($rental['items'][0]['borrow_date']) ?>"
                                         data-return_date="<?= esc($rental['items'][0]['return_date']) ?>">
-                                        Detail
+                                        <i class="fas fa-pen" style="font-size: 0.8rem;"></i> <!-- 👁️ Icon untuk "lihat/detail" -->
                                     </button>
 
+                                    <!-- Tombol Cetak -->
                                     <a href="<?= base_url('rental-status/print/' . $rental['id']) ?>"
-                                        class="btn btn-primary btn-sm" target="_blank">Cetak</a>
+                                        class="btn btn-primary btn-sm" target="_blank">
+                                        <i class="fas fa-print" style="font-size: 0.8rem;"></i> <!-- 🖨️ Icon untuk "cetak" -->
+                                    </a>
                                 </td>
+
                             </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -341,7 +346,7 @@ document.addEventListener('DOMContentLoaded', function() {
         $('#ongkirValue').text("Rp. + " + shippingCost.toLocaleString('id-ID')); // 🔥 update ongkir
         $('#totalHargaSemua').text("Rp. " + finalTotal.toLocaleString('id-ID')); // 🔥 update total semua
         // 🔥 Ini yang WAJIB ditambahkan agar total_price dikirim ke server
-    $('#total_price').val(finalTotal); 
+        $('#total_price').val(finalTotal);
     }
 
 
@@ -416,25 +421,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 });
-
-$(document).ready(function() {
-    // Filter button action
-    $('#filterBtn').on('click', function() {
-        var bulan = $('#filterBulan').val();
-        var tahun = $('#filterTahun').val();
-        console.log('Bulan:', bulan, 'Tahun:', tahun);
-    });
-
-    // Export PDF button
-    $('#exportPdfBtn').on('click', function() {
-        alert('Export to PDF');
-    });
-
-    // Export Excel button
-    $('#exportExcelBtn').on('click', function() {
-        alert('Export to Excel');
-    });
-});
 </script>
 
 <style>
@@ -450,6 +436,7 @@ $(document).ready(function() {
 .text-right {
     text-align: right;
 }
+
 </style>
 
 <?= $this->endSection() ?>

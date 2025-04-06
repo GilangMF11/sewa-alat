@@ -9,6 +9,6 @@ class CartController extends BaseController
 {
     public function index()
     {
-        //
+        return view('Users/cart/v_user_cart');
     }
 }

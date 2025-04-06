@@ -32,8 +32,10 @@
                     <form method="get" action="<?= base_url('report') ?>" class="form-inline mb-3" id="filterForm">
                         <select class="form-control mr-2" name="status" id="filterStatus">
                             <option value="">Pilih Status</option>
-                            <option value="1" <?= ($_GET['status'] ?? '') == '1' ? 'selected' : '' ?>>Sudah Dikembalikan</option>
-                            <option value="0" <?= ($_GET['status'] ?? '') == '0' ? 'selected' : '' ?>>Belum Dikembalikan</option>
+                            <option value="1" <?= ($_GET['status'] ?? '') == '1' ? 'selected' : '' ?>>Sudah Dikembalikan
+                            </option>
+                            <option value="0" <?= ($_GET['status'] ?? '') == '0' ? 'selected' : '' ?>>Belum Dikembalikan
+                            </option>
                         </select>
 
                         <select class="form-control mr-2" name="bulan" id="filterBulan">
@@ -68,24 +70,26 @@
 
                     <!-- Export Buttons -->
                     <div class="text-right mb-3">
-                    <form action="<?= base_url('report/export-pdf') ?>" method="get" target="_blank" style="display: inline;">
-    <input type="hidden" name="status" value="<?= esc($_GET['status'] ?? '') ?>">
-    <input type="hidden" name="bulan" value="<?= esc($_GET['bulan'] ?? '') ?>">
-    <input type="hidden" name="tahun" value="<?= esc($_GET['tahun'] ?? '') ?>">
-    <button type="submit" class="btn btn-danger">Export PDF</button>
-</form>
+                        <form action="<?= base_url('report/export-pdf') ?>" method="get" target="_blank"
+                            style="display: inline;">
+                            <input type="hidden" name="status" value="<?= esc($_GET['status'] ?? '') ?>">
+                            <input type="hidden" name="bulan" value="<?= esc($_GET['bulan'] ?? '') ?>">
+                            <input type="hidden" name="tahun" value="<?= esc($_GET['tahun'] ?? '') ?>">
+                            <button type="submit" class="btn btn-danger">Export PDF</button>
+                        </form>
 
-<form action="<?= base_url('report/export-excel') ?>" method="get" target="_blank" style="display: inline;">
-    <input type="hidden" name="status" value="<?= esc($_GET['status'] ?? '') ?>">
-    <input type="hidden" name="bulan" value="<?= esc($_GET['bulan'] ?? '') ?>">
-    <input type="hidden" name="tahun" value="<?= esc($_GET['tahun'] ?? '') ?>">
-    <button type="submit" class="btn btn-success">Export Excel</button>
-</form>
+                        <form action="<?= base_url('report/export-excel') ?>" method="get" target="_blank"
+                            style="display: inline;">
+                            <input type="hidden" name="status" value="<?= esc($_GET['status'] ?? '') ?>">
+                            <input type="hidden" name="bulan" value="<?= esc($_GET['bulan'] ?? '') ?>">
+                            <input type="hidden" name="tahun" value="<?= esc($_GET['tahun'] ?? '') ?>">
+                            <button type="submit" class="btn btn-success">Export Excel</button>
+                        </form>
 
                     </div>
 
                     <!-- Table -->
-                    <table class="table table-bordered table-striped table-hover" id="example1">
+                    <table class="table table-bordered table-striped table-hover" id="example1" style="font-size: 12px;">
                         <thead>
                             <tr>
                                 <th>No</th>
@@ -108,22 +112,23 @@
                                 <td><?= esc(date('Y-m-d', strtotime($rental['created_at']))) ?></td>
                                 <td>
                                     <?php if ($rental['return_status'] == 1): ?>
-                                        <span class="badge badge-success">Sudah Dikembalikan</span>
+                                    <span class="badge badge-success">Sudah Dikembalikan</span>
                                     <?php else: ?>
-                                        <span class="badge badge-warning">Belum Dikembalikan</span>
+                                    <span class="badge badge-warning">Belum Dikembalikan</span>
                                     <?php endif; ?>
                                 </td>
                                 <td><?= $rental['item_count'] ?></td>
                                 <td>Rp. <?= number_format($rental['total_price'], 0, ',', '.') ?></td>
                                 <td>
                                     <?php if ($rental['payment_status'] == 1): ?>
-                                        <span class="badge badge-success">Lunas</span>
+                                    <span class="badge badge-success">Lunas</span>
                                     <?php else: ?>
-                                        <span class="badge badge-warning">Belum Lunas</span>
+                                    <span class="badge badge-warning">Belum Lunas</span>
                                     <?php endif; ?>
                                 </td>
                                 <td>
-                                    <a href="<?= base_url('rental-status/print/' . $rental['id']) ?>" class="btn btn-primary btn-sm" target="_blank">Cetak</a>
+                                    <a href="<?= base_url('rental-status/print/' . $rental['id']) ?>"
+                                        class="btn btn-primary btn-sm" target="_blank">Cetak</a>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
@@ -143,9 +148,11 @@
     background-color: #4caf50;
     color: white;
 }
+
 .ml-auto {
     margin-left: auto;
 }
+
 .text-right {
     text-align: right;
 }

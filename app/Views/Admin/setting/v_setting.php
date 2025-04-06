@@ -118,7 +118,29 @@
     </section>
 </div>
 <?= $this->endSection() ?>
+<!-- Panggil SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Menampilkan SweetAlert2 setelah Insert/Update/Delete
+    <?php if (session()->getFlashdata('success')): ?>
+    Swal.fire({
+        icon: 'success',
+        title: 'Berhasil!',
+        text: '<?= session()->getFlashdata('success'); ?>',
+    });
+    <?php endif; ?>
+
+    <?php if (session()->getFlashdata('error')): ?>
+    Swal.fire({
+        icon: 'error',
+        title: 'Gagal!',
+        text: '<?= session()->getFlashdata('error'); ?>',
+    });
+    <?php endif; ?>
+});
+</script>
 <style>
     .custom-header-bg {
         background-color: #4caf50;

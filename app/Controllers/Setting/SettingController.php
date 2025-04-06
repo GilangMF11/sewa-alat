@@ -37,8 +37,9 @@ class SettingController extends BaseController
             'facebook'     => 'permit_empty|valid_url',
             'instagram'    => 'permit_empty|valid_url',
             'twitter'      => 'permit_empty|valid_url',
-            'logo'         => 'permit_empty|uploaded[logo]|max_size[logo,2048]|is_image[logo]',
-            'background'   => 'permit_empty|uploaded[background]|max_size[background,2048]|is_image[background]',
+            'logo' => 'permit_empty|uploaded[logo]|max_size[logo,2048]|is_image[logo]',
+            'background' => 'permit_empty|uploaded[background]|max_size[background,2048]|is_image[background]',
+
         ];
 
         if (!$this->validate($rules)) {
