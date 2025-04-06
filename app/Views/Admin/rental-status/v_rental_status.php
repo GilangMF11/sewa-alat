@@ -80,11 +80,7 @@
                             <button class="btn btn-primary ml-2">Cari</button>
                         </form>
 
-                        <!-- Export Button -->
-                        <div class="col-md-2 ml-auto text-right">
-                            <button class="btn btn-danger" id="exportPdfBtn">PDF</button>
-                            <button class="btn btn-success" id="exportExcelBtn">Excel</button>
-                        </div>
+                        
                     </div>
                     <!-- Filter Form End -->
 
@@ -94,12 +90,14 @@
                             <tr>
                                 <th>No</th>
                                 <th>ID Transaksi</th>
-                                <th>Nama Penyewa</th>
+                                <th>Penyewa</th>
                                 <th>Tanggal Pinjam</th>
                                 <th>Status Sewa</th>
                                 <th>Jumlah</th>
-                                <th>Total Harga</th>
-                                <th>Status Pembayaran</th>
+                                <th>Ongkir</th>
+                                <th>DP</th>
+                                <th>Total</th>
+                                <th>Status</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -118,6 +116,8 @@
                                     <?php endif; ?>
                                 </td>
                                 <td><?= $rental['item_count'] ?></td>
+                                <td>Rp. <?= number_format($rental['down_payment'], 0, ',', '.') ?></td>
+                                <td>Rp. <?= number_format($rental['shipping_cost'], 0, ',', '.') ?></td>
                                 <td>Rp. <?= number_format($rental['total_price'], 0, ',', '.') ?></td>
                                 <td>
                                     <?php if ($rental['payment_status'] == 1): ?>
@@ -129,7 +129,7 @@
                                 <td>
                                     <button class="btn btn-info btn-sm btn-detail" data-toggle="modal"
                                         data-target="#modalUpdate" data-id="<?= $rental['id'] ?>">Detail</button>
-                                    <a href="#" class="btn btn-primary btn-sm">Cetak</a>
+                                        <a href="<?= base_url('rental-status/print/' . $rental['id']) ?>" class="btn btn-primary btn-sm" target="_blank">Cetak</a>
                                 </td>
                             </tr>
                             <?php endforeach; ?>

@@ -6,16 +6,19 @@ use App\Controllers\BaseController;
 use CodeIgniter\HTTP\ResponseInterface;
 use App\Models\Rentals\RentalModel;
 use App\Models\Rentals\RentalItemModel;
+use App\Models\Settings\SettingModel;
 
 class RentalStatusController extends BaseController
 {
     protected $rentalModel;
     protected $rentalItemModel;
+    protected $setting;
 
     public function __construct()
     {
         $this->rentalModel = new RentalModel();
         $this->rentalItemModel = new RentalItemModel();
+        $this->setting = new SettingModel();
     }
     public function index()
 {
@@ -111,5 +114,26 @@ class RentalStatusController extends BaseController
         return redirect()->to('/report')->with('success', 'Status berhasil diperbarui.');
     }
     
+    public function print($id)
+    {
+        $settings = $this->setting;
+        $rental = $this->rentalModel->find($id);
+        $items = $this->rentalItemModel
+                    ->select('rental_items.*, items.name as item_name')
+                    ->join('items', 'items.id = rental_items.item_id')
+                    ->where('rental_items.rental_id', $id)
+                    ->findAll();
+
+        if (!$rental) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Transaksi tidak ditemukan.');
+        }
+
+        return view('Admin/rental-status/v_rental_print_struk', [
+            'rental' => $rental,
+            'items' => $items,
+            'setting' => $settings
+        ]);
+    }
+
 
 }

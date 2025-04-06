@@ -58,6 +58,7 @@ $routes->group('', ['filter' => 'auth'], function($routes) {
         $routes->get('/', 'RentalStatusController::index');
         $routes->get('detail/(:segment)', 'RentalStatusController::detail/$1');
         $routes->post('update', 'RentalStatusController::updateStatus');
+        $routes->get('print/(:segment)', 'RentalStatusController::print/$1');
     });
 
     // User
