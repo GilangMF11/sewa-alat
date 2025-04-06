@@ -21,51 +21,51 @@ class RentalStatusController extends BaseController
         $this->setting = new SettingModel();
     }
     public function index()
-{
-    $status = $this->request->getGet('status');
-    $bulan  = $this->request->getGet('bulan');
-    $tahun  = $this->request->getGet('tahun');
+    {
+        $status = $this->request->getGet('status');
+        $bulan  = $this->request->getGet('bulan');
+        $tahun  = $this->request->getGet('tahun');
 
-    // Mulai query untuk mengambil data sewa
-    $query = $this->rentalModel->orderBy('created_at', 'DESC');
+        // Mulai query untuk mengambil data sewa
+        $query = $this->rentalModel->orderBy('created_at', 'DESC');
 
-    // Filter berdasarkan status, bulan, atau tahun jika parameter ada
-    if ($status !== null && $status !== '') {
-        $query->where('return_status', $status);
+        // Filter berdasarkan status, bulan, atau tahun jika parameter ada
+        if ($status !== null && $status !== '') {
+            $query->where('return_status', $status);
+        }
+
+        if ($bulan) {
+            $query->where('MONTH(created_at)', $bulan);
+        }
+
+        if ($tahun) {
+            $query->where('YEAR(created_at)', $tahun);
+        }
+
+        // Ambil hasil query
+        $rentals = $query->findAll();
+
+        // Siapkan data tambahan untuk view
+        $rentalDetails = [];
+
+        // Hitung total item per transaksi dan ambil detail item
+        foreach ($rentals as $rental) {
+            $items = $this->rentalItemModel
+                        ->select('rental_items.*, items.name AS item_name, items.description AS item_description') // Mendapatkan nama barang dari tabel items
+                        ->join('items', 'items.id = rental_items.item_id')
+                        ->where('rental_items.rental_id', $rental['id'])
+                        ->findAll();
+                        
+            $rental['item_count'] = count($items);
+            $rental['items'] = $items; // Menambahkan data items ke dalam rental
+            $rentalDetails[] = $rental;
+        }
+
+        // Kirim data ke view
+        return view('Admin/rental-status/v_rental_status', [
+            'rentals' => $rentalDetails // Mengirimkan data rental beserta items
+        ]);
     }
-
-    if ($bulan) {
-        $query->where('MONTH(created_at)', $bulan);
-    }
-
-    if ($tahun) {
-        $query->where('YEAR(created_at)', $tahun);
-    }
-
-    // Ambil hasil query
-    $rentals = $query->findAll();
-
-    // Siapkan data tambahan untuk view
-    $rentalDetails = [];
-
-    // Hitung total item per transaksi dan ambil detail item
-    foreach ($rentals as $rental) {
-        $items = $this->rentalItemModel
-                    ->select('rental_items.*, items.name AS item_name, items.description AS item_description') // Mendapatkan nama barang dari tabel items
-                    ->join('items', 'items.id = rental_items.item_id')
-                    ->where('rental_items.rental_id', $rental['id'])
-                    ->findAll();
-                    
-        $rental['item_count'] = count($items);
-        $rental['items'] = $items; // Menambahkan data items ke dalam rental
-        $rentalDetails[] = $rental;
-    }
-
-    // Kirim data ke view
-    return view('Admin/rental-status/v_rental_status', [
-        'rentals' => $rentalDetails // Mengirimkan data rental beserta items
-    ]);
-}
 
 
 

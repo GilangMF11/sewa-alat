@@ -71,6 +71,8 @@ $routes->group('', ['filter' => 'auth'], function($routes) {
     // report
     $routes->group('report', ['namespace' => 'App\Controllers\Report'], function($routes) {
         $routes->get('/', 'ReportController::index');
+        $routes->get('export-pdf', 'ReportController::exportPdf');
+        $routes->get('export-excel', 'ReportController::exportExcel');
     });
 
     // Setting
