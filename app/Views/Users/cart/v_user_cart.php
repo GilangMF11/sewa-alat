@@ -2,20 +2,20 @@
 <?= $this->section('content') ?>
 
 <style>
-.cart-table {
-    font-size: 0.9rem;
-}
-.cart-table img {
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
-.cart-actions {
-    display: flex;
-    gap: 5px;
-}
+    .cart-table {
+        font-size: 0.9rem;
+    }
+    .cart-table img {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .cart-actions {
+        display: flex;
+        gap: 5px;
+    }
 </style>
 
 <div class="content-wrapper">
@@ -42,7 +42,7 @@
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-bordered table-hover cart-table">
+                            <table id="example1" class="table table-bordered table-hover cart-table">
                                 <thead class="thead-light">
                                     <tr>
                                         <th>Produk</th>
@@ -68,12 +68,12 @@
                                             <td><?= esc($item['quantity']) ?></td>
                                             <td>Rp <?= number_format($subtotal, 0, ',', '.') ?></td>
                                             <td class="cart-actions text-center">
-                                                <a href="<?= base_url('cart/delete/' . $item['id']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus item ini?')">
+                                                <a href="<?= base_url('user/cart/delete/' . $item['id']) ?>" class="btn btn-danger btn-sm delete-btn">
                                                     <i class="fas fa-trash"></i>
                                                 </a>
-                                                <a href="<?= base_url('cart/edit/' . $item['id']) ?>" class="btn btn-info btn-sm">
+                                                <!-- <a href="#" class="btn btn-info btn-sm edit-btn" data-id="<?= $item['id'] ?>" data-quantity="<?= $item['quantity'] ?>" data-toggle="modal" data-target="#editQuantityModal">
                                                     <i class="fas fa-edit"></i>
-                                                </a>
+                                                </a> -->
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -98,5 +98,69 @@
         </div>
     </section>
 </div>
+
+<!-- Modal Edit Quantity -->
+<div class="modal fade" id="editQuantityModal" tabindex="-1" role="dialog" aria-labelledby="editQuantityModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="editQuantityModalLabel">Edit Jumlah Barang</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="<?= base_url('user/cart/store') ?>" method="post">
+                <?= csrf_field() ?>
+                <div class="modal-body">
+                    <input type="hidden" name="cart_item_id" id="cart_item_id">
+                    <div class="form-group">
+                        <label>Jumlah</label>
+                        <input type="number" name="quantity" id="quantity" class="form-control" min="1" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Update Jumlah</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- SweetAlert2 Script -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // SweetAlert2 Konfirmasi Delete
+        $(".delete-btn").click(function(e) {
+            e.preventDefault();
+            var deleteUrl = $(this).attr('href');
+
+            Swal.fire({
+                title: 'Apakah Anda Yakin?',
+                text: "Item ini akan dihapus dari keranjang!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = deleteUrl;
+                }
+            });
+        });
+
+        // Modal Edit Quantity
+        $('.edit-btn').click(function() {
+            var itemId = $(this).data('id');
+            var quantity = $(this).data('quantity');
+
+            $('#cart_item_id').val(itemId);
+            $('#quantity').val(quantity);
+        });
+    });
+</script>
 
 <?= $this->endSection() ?>

@@ -98,7 +98,7 @@ $routes->group('', ['filter' => 'auth'], function($routes) {
     $routes->group('user', ['namespace' => 'App\Controllers\Cart'], function($routes) {
         $routes->get('cart/', 'CartController::index');
         $routes->post('cart/store', 'CartController::store');
-        $routes->get('cart/delete/(:segment)', 'CartController::delete/$1');
+        $routes->get('cart/delete/(:segment)', 'CartController::destroy/$1');
     });
 
     // Checkout
@@ -116,6 +116,8 @@ $routes->group('', ['filter' => 'auth'], function($routes) {
     // Transaction
     $routes->group('user', ['namespace' => 'App\Controllers\User'], function($routes) {
         $routes->get('transactions/', 'UserController::transaction');
+        $routes->get('transactions/detail/(:segment)', 'UserController::transactionDetail/$1');
+        $routes->get('transactions/print/(:segment)', 'UserController::print/$1');
     });
 
     // Product

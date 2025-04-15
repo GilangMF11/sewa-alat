@@ -76,7 +76,7 @@
                         <h5>Metode Pembayaran</h5>
                         <div class="form-group">
                             <div class="custom-control custom-radio">
-                                <input class="custom-control-input" type="radio" id="customRadio1" name="payment_type" value="3" checked>
+                                <input class="custom-control-input" type="radio" id="customRadio1" name="payment_type" value="2" checked>
                                 <label for="customRadio1" class="custom-control-label">Transfer</label>
                             </div>
                         </div>

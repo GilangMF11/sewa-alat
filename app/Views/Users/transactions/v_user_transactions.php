@@ -39,6 +39,7 @@
                         <?php endif; ?>
                         <td>
                             <a href="<?= base_url('user/transactions/detail/' . $rental['id']) ?>" class="btn btn-sm btn-info">Detail</a>
+                            <a href="<?= base_url('user/transactions/print/' . $rental['id']) ?>" class="btn btn-sm btn-success" target="_blank">Cetak</a>
                         </td>
                     </tr>
                     <?php endforeach ?>

@@ -5,17 +5,21 @@ namespace App\Controllers\User;
 use App\Controllers\BaseController;
 use App\Models\Users\UserModel;
 use App\Models\Rentals\RentalModel;
+use App\Models\Rentals\RentalItemModel;
 
 class UserController extends BaseController
 {
     protected $userModel;
     protected $rentalModel;
+    protected $rentalItemModel;
+
 
     public function __construct()
     {
         // Inisialisasi model
         $this->userModel = new UserModel();
         $this->rentalModel = new RentalModel();
+        $this->rentalItemModel = new RentalItemModel();
     }
 
     public function index()
@@ -165,11 +169,57 @@ class UserController extends BaseController
             return redirect()->to('/login');
         }
 
-        $rentals = $this->rentalModel->where('id', $userId)->findAll();
+        $rentals = $this->rentalModel->where('user_id', $userId)->findAll();
 
         return view('Users/transactions/v_user_transactions', [
             'rentals' => $rentals
         ]);
     }
-    
+
+    public function transactionDetail($rentalId)
+    {
+        $userId = session()->get('user_id');
+
+        if (!$userId) {
+            return redirect()->to('/login');
+        }
+
+        // Ambil transaksi berdasarkan ID
+        $rental = $this->rentalModel->find($rentalId);
+
+        if (!$rental || $rental['user_id'] !== $userId) {
+            return redirect()->to('/user/transactions')->with('error', 'Transaksi tidak ditemukan.');
+        }
+
+        // Ambil item sewa berdasarkan rental_id
+        $rentalItems = $this->rentalItemModel->getItemsByRental($rentalId);
+
+        return view('Users/transactions/v_user_transactions_detail', [
+            'rental' => $rental,
+            'rentalItems' => $rentalItems
+        ]);
+    }
+
+    public function print($id)
+    {
+        $settings = $this->setting;
+        $rental = $this->rentalModel->find($id);
+        $items = $this->rentalItemModel
+                    ->select('rental_items.*, items.name as item_name')
+                    ->join('items', 'items.id = rental_items.item_id')
+                    ->where('rental_items.rental_id', $id)
+                    ->findAll();
+
+        if (!$rental) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Transaksi tidak ditemukan.');
+        }
+
+        return view('Admin/rental-status/v_rental_print_struk', [
+            'rental' => $rental,
+            'items' => $items,
+            'setting' => $settings
+        ]);
+    }
+
+
 }

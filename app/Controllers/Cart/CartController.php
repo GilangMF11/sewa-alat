@@ -91,7 +91,7 @@ class CartController extends BaseController
 
     public function destroy($id) {
         $this->cartItemModel->delete($id);
-        return redirect()->to('/cart')->with('success', 'Item berhasil dihapus dari keranjang.');
+        return redirect()->to('user/cart')->with('success', 'Item berhasil dihapus dari keranjang.');
     }
 
 }
