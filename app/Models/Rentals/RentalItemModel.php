@@ -10,11 +10,11 @@ class RentalItemModel extends Model
     protected $primaryKey = 'id';
     protected $allowedFields = 
     [
-        'rental_id', 
+        'rental_id',
         'item_id',
         'borrow_date',
-        'return_date', 
-        'quantity', 
+        'return_date',
+        'quantity',
         'price'
     ];
     //protected $useTimestamps = true;

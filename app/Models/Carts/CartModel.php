@@ -13,7 +13,7 @@ class CartModel extends Model
 
     public function getCartWithItems($userId)
     {
-        return $this->select('carts.*, cart_items.*, items.name, items.price')
+        return $this->select('carts.*, cart_items.*, items.name, items.price, items.image')
                     ->join('cart_items', 'cart_items.cart_id = carts.id')
                     ->join('items', 'items.id = cart_items.item_id')
                     ->where('carts.user_id', $userId)
