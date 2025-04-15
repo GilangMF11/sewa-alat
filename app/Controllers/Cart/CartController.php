@@ -41,14 +41,14 @@ class CartController extends BaseController
         // Cari atau buat cart aktif untuk user ini
         $cart = $this->cartModel
                     ->where('user_id', $userId)
-                    ->where('status', 'active')
+                    ->where('status', '1')
                     ->first();
 
         if (!$cart) {
             // Jika belum ada cart, buat baru
             $cartId = $this->cartModel->insert([
                 'user_id' => $userId,
-                'status' => 'active'
+                'status' => '1'
             ]);
         } else {
             $cartId = $cart['id']; // fix: array access, bukan object

@@ -51,7 +51,7 @@ class CheckoutController extends BaseController
         // Ambil keranjang aktif
         $cart = $this->cartModel
             ->where('user_id', $userId)
-            ->where('status', 'active')
+            ->where('status', '1')
             ->first();
 
         if (!$cart) {
@@ -104,9 +104,16 @@ class CheckoutController extends BaseController
 
         // Update keranjang jadi "checked_out"
         $this->cartModel->update($cart['id'], [
-            'status' => 'checked_out'
+            'status' => '0'
         ]);
 
-        return redirect()->to('/user/rentals')->with('success', 'Checkout berhasil!');
+        //return redirect()->to('/user/rentals')->with('success', 'Checkout berhasil!');
+        $transactionData = $this->rentalModel->find($rentalId);
+
+        return view('Users/cart/v_user_cart_checkout_success', [
+            'transaction' => $transactionData
+        ]);
     }
+
+
 }

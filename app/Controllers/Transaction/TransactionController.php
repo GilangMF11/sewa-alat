@@ -44,7 +44,7 @@ class TransactionController extends BaseController
             'borrow_date' => 'required',
             'return_date' => 'required',
             'shipping_cost' => 'required|numeric',
-            'payment_method' => 'required',
+            'payment_type' => 'required',
             'total_price' => 'required|numeric',
         ]);
 
@@ -78,7 +78,7 @@ class TransactionController extends BaseController
             'shipping_cost' => $shippingCost,
             'return_status' => $request->getPost('return_status') ?? 0,
             'payment_status' => $request->getPost('payment_status') ?? 0,
-            'payment_type' => $request->getPost('payment_type') ?? 1,
+            'payment_type' => $request->getPost('payment_type') ?? 0,
             'down_payment' => $request->getPost('down_payment') ?? null,
             'payment_due' => $request->getPost('payment_due') ?? null,
             'proof_of_payment' => $proof_of_payment ? $newProof : null,

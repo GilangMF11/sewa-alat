@@ -24,7 +24,7 @@
 
     <section class="content">
         <div class="container-fluid">
-            <form action="<?= base_url('user/checkout/process') ?>" method="post" id="checkoutForm">
+            <form action="<?= base_url('user/checkout/store') ?>" method="post" id="checkoutForm">
                 <?= csrf_field() ?>
 
                 <div class="card">
@@ -72,6 +72,14 @@
                                 <strong id="totalPriceDisplay">Rp <?= number_format($total, 0, ',', '.') ?></strong>
                             </li>
                         </ul>
+
+                        <h5>Metode Pembayaran</h5>
+                        <div class="form-group">
+                            <div class="custom-control custom-radio">
+                                <input class="custom-control-input" type="radio" id="customRadio1" name="payment_type" value="3" checked>
+                                <label for="customRadio1" class="custom-control-label">Transfer</label>
+                            </div>
+                        </div>
                         <p class="blink-red">* Belum termasuk Ongkir</p>
 
                         <div class="text-right">

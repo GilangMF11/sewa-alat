@@ -107,6 +107,12 @@ $routes->group('', ['filter' => 'auth'], function($routes) {
         $routes->post('checkout/store', 'CheckoutController::store');
     });
 
+    // Payment
+    $routes->group('user', ['namespace' => 'App\Controllers\Payment'], function($routes) {
+       // $routes->get('payment/', 'PaymentController::index');
+        $routes->post('payment/confirm', 'PaymentController::confirm');
+    });
+
     // Transaction
     $routes->group('user', ['namespace' => 'App\Controllers\User'], function($routes) {
         $routes->get('transactions/', 'UserController::transaction');

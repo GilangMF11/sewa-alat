@@ -103,12 +103,11 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="payment_method"><i class="fas fa-wallet"></i> Metode Pembayaran</label>
-                            <select name="payment_method" id="payment_method" class="form-control" required>
+                            <label for="payment_type"><i class="fas fa-wallet"></i> Metode Pembayaran</label>
+                            <select name="payment_type" id="payment_type" class="form-control" required>
                                 <option value="">-- Pilih Metode --</option>
-                                <option value="cash">Cash</option>
-                                <option value="credit_card">Kartu Kredit</option>
-                                <option value="transfer">Transfer Bank</option>
+                                <option value="0">Cash</option>
+                                <option value="1">Transfer Bank</option>
                             </select>
                         </div>
 

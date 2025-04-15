@@ -17,7 +17,7 @@ class CartModel extends Model
                     ->join('cart_items', 'cart_items.cart_id = carts.id')
                     ->join('items', 'items.id = cart_items.item_id')
                     ->where('carts.user_id', $userId)
-                    ->where('carts.status', 'active')
+                    ->where('carts.status', '1')
                     ->findAll();
     }
 
