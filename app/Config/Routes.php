@@ -126,6 +126,18 @@ $routes->group('', ['filter' => 'auth'], function($routes) {
         $routes->get('products-list', 'ProductController::productAll');
     });
 
+    // Database backup and restore routes
+    $routes->group('backup', ['namespace' => 'App\Controllers\Backup'], function($routes) {
+        $routes->get('/', 'BackupController::index');
+        $routes->post('backup', 'BackupController::backup');
+        $routes->post('backup-tables', 'BackupController::backupTables');
+        $routes->post('restore', 'BackupController::restore');
+        $routes->get('list-backups', 'BackupController::listBackups');
+        $routes->get('tables', 'BackupController::getTables');
+        $routes->get('download/(:segment)', 'BackupController::downloadBackup/$1');
+        $routes->delete('delete/(:segment)', 'BackupController::deleteBackup/$1');
+    });
+
 
 
 });

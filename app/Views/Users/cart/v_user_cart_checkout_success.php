@@ -44,7 +44,13 @@
                             </tr>
                             <tr>
                                 <td><strong>Metode Pembayaran</strong></td>
-                                <td><?= strtoupper(esc($transaction['payment_type'])) ?></td>
+                                <?php if ($transaction['payment_type'] == 2): ?>
+                            <td><span class="badge badge-success">Transfer</span></td>
+                        <?php elseif ($transaction['payment_type'] == 1): ?>
+                            <td><span class="badge badge-success">Cash</span></td>
+                        <?php else: ?>
+                            <td><span class="badge badge-warning">Error</span></td>
+                        <?php endif; ?>
                             </tr>
                         </tbody>
                     </table>

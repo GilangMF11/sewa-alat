@@ -75,6 +75,14 @@
                             <p>Pengaturan</p>
                         </a>
                     </li>
+
+                    <!-- Backup -->
+                    <li class="nav-item">
+                        <a href="<?= base_url('backup') ?>" class="nav-link">
+                            <i class="nav-icon fas fa-database"></i>
+                            <p>Backup & Restore</p>
+                        </a>
+                    </li>
                 <?php endif; ?>
 
                 <!-- Menu Khusus User -->
