@@ -310,22 +310,91 @@ class BackupController extends BaseController
         file_put_contents($filepath, $sql);
     }
     
-        /**
-     * Restore database from backup file
+    /**
+     * Get table dependencies based on foreign keys
+     */
+    private function getTableDependencies()
+    {
+        try {
+            $query = $this->db->query("
+                SELECT 
+                    TABLE_NAME,
+                    REFERENCED_TABLE_NAME
+                FROM 
+                    INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
+                WHERE 
+                    REFERENCED_TABLE_SCHEMA = DATABASE() 
+                    AND REFERENCED_TABLE_NAME IS NOT NULL
+            ");
+            
+            $dependencies = [];
+            foreach ($query->getResult() as $row) {
+                if (!isset($dependencies[$row->TABLE_NAME])) {
+                    $dependencies[$row->TABLE_NAME] = [];
+                }
+                $dependencies[$row->TABLE_NAME][] = $row->REFERENCED_TABLE_NAME;
+            }
+            
+            return $dependencies;
+        } catch (\Exception $e) {
+            log_message('error', 'Get Dependencies Error: ' . $e->getMessage());
+            return [];
+        }
+    }
+    
+    /**
+     * Get table deletion order (considering foreign key constraints)
+     */
+    private function getTableDeletionOrder($tables)
+    {
+        $dependencies = $this->getTableDependencies();
+        $ordered = [];
+        $processed = [];
+        
+        // Function to add table respecting dependencies
+        $addTable = function($table) use (&$addTable, &$ordered, &$processed, $dependencies) {
+            if (in_array($table, $processed)) {
+                return;
+            }
+            
+            // First add all tables that this table depends on
+            if (isset($dependencies[$table])) {
+                foreach ($dependencies[$table] as $dependency) {
+                    if ($dependency !== $table) { // Avoid self-reference
+                        $addTable($dependency);
+                    }
+                }
+            }
+            
+            $ordered[] = $table;
+            $processed[] = $table;
+        };
+        
+        // Process all tables
+        foreach ($tables as $table) {
+            $addTable($table);
+        }
+        
+        // Return in reverse order for deletion (dependent tables first)
+        return array_reverse($ordered);
+    }
+    
+    /**
+     * Restore database from backup file - IMPROVED VERSION
      */
     public function restore()
     {
         try {
             $file = $this->request->getFile('backup_file');
-            $db   = \Config\Database::connect();
-    
+            $db = \Config\Database::connect();
+
             if (!$file->isValid()) {
                 return $this->response->setJSON([
                     'status' => 'error',
                     'message' => 'File backup tidak valid: ' . $file->getErrorString()
                 ]);
             }
-    
+
             // Validasi ekstensi file
             $extension = strtolower($file->getClientExtension() ?? pathinfo($file->getName(), PATHINFO_EXTENSION));
             if ($extension !== 'sql') {
@@ -334,7 +403,7 @@ class BackupController extends BaseController
                     'message' => 'File harus berformat .sql'
                 ]);
             }
-    
+
             // Baca konten file SQL
             $sqlContent = file_get_contents($file->getTempName());
             if (empty($sqlContent)) {
@@ -343,49 +412,57 @@ class BackupController extends BaseController
                     'message' => 'Isi file kosong'
                 ]);
             }
-    
-            // Optional: Hapus semua tabel sebelum restore (hati-hati!)
-            // $tables = $db->listTables();
-            // foreach ($tables as $table) {
-            //     $db->query("DROP TABLE IF EXISTS `$table`");
-            // }
-    
-            // Pecah SQL per perintah (menghilangkan komentar dan baris kosong)
-            $sqlCommands = array_filter(
-                array_map('trim', explode(';', $sqlContent)),
-                function ($cmd) {
-                    return $cmd !== '' && strpos($cmd, '--') !== 0;
-                }
-            );
-    
+
+            // Start transaction
             $db->transBegin();
-            $errors = [];
-    
-            foreach ($sqlCommands as $command) {
-                try {
-                    if (!empty(trim($command))) {
-                        $db->query($command);
+            
+            try {
+                // STEP 1: Disable foreign key checks
+                $db->query("SET FOREIGN_KEY_CHECKS = 0");
+                
+                // STEP 2: Get all existing tables and drop them in correct order
+                $existingTables = $db->listTables();
+                if (!empty($existingTables)) {
+                    $deletionOrder = $this->getTableDeletionOrder($existingTables);
+                    
+                    foreach ($deletionOrder as $table) {
+                        try {
+                            $db->query("DROP TABLE IF EXISTS `{$table}`");
+                        } catch (\Exception $e) {
+                            log_message('warning', "Could not drop table {$table}: " . $e->getMessage());
+                            // Continue even if drop fails
+                        }
                     }
-                } catch (\Throwable $e) {
-                    $errors[] = $e->getMessage();
                 }
-            }
-    
-            if (!empty($errors)) {
-                $db->transRollback();
+                
+                // STEP 3: Execute SQL commands from backup
+                $this->executeSqlCommands($db, $sqlContent);
+                
+                // STEP 4: Re-enable foreign key checks
+                $db->query("SET FOREIGN_KEY_CHECKS = 1");
+                
+                // Commit transaction
+                $db->transCommit();
+                
                 return $this->response->setJSON([
-                    'status' => 'error',
-                    'message' => 'Beberapa query gagal dijalankan.',
-                    'errors' => $errors
+                    'status' => 'success',
+                    'message' => 'Restore berhasil dilakukan.'
                 ]);
+                
+            } catch (\Exception $e) {
+                // Rollback on error
+                $db->transRollback();
+                
+                // Try to re-enable foreign key checks even on error
+                try {
+                    $db->query("SET FOREIGN_KEY_CHECKS = 1");
+                } catch (\Exception $fkError) {
+                    log_message('error', 'Could not re-enable foreign key checks: ' . $fkError->getMessage());
+                }
+                
+                throw $e;
             }
-    
-            $db->transCommit();
-    
-            return $this->response->setJSON([
-                'status' => 'success',
-                'message' => 'Restore berhasil dilakukan.'
-            ]);
+            
         } catch (\Throwable $e) {
             log_message('error', 'Restore Error: ' . $e->getMessage());
             return $this->response->setJSON([
@@ -395,8 +472,145 @@ class BackupController extends BaseController
         }
     }
     
-
+    /**
+     * Execute SQL commands from backup file
+     */
+    private function executeSqlCommands($db, $sqlContent)
+    {
+        // Remove comments and split into commands
+        $lines = explode("\n", $sqlContent);
+        $currentCommand = '';
+        $commands = [];
+        
+        foreach ($lines as $line) {
+            $line = trim($line);
+            
+            // Skip empty lines and comments
+            if (empty($line) || substr($line, 0, 2) === '--' || substr($line, 0, 2) === '/*') {
+                continue;
+            }
+            
+            $currentCommand .= $line . ' ';
+            
+            // Check if command is complete (ends with semicolon)
+            if (substr(rtrim($line), -1) === ';') {
+                $commands[] = trim($currentCommand);
+                $currentCommand = '';
+            }
+        }
+        
+        // Execute each command
+        $errors = [];
+        foreach ($commands as $command) {
+            if (!empty(trim($command))) {
+                try {
+                    $db->query($command);
+                } catch (\Exception $e) {
+                    $errors[] = [
+                        'command' => substr($command, 0, 100) . '...',
+                        'error' => $e->getMessage()
+                    ];
+                    log_message('error', 'SQL Command Error: ' . $e->getMessage() . ' | Command: ' . substr($command, 0, 200));
+                }
+            }
+        }
+        
+        // If there are too many errors, throw exception
+        if (count($errors) > 10) {
+            throw new \Exception('Terlalu banyak error dalam file SQL. Restore dibatalkan.');
+        }
+        
+        if (!empty($errors) && count($errors) > 0) {
+            log_message('warning', 'Some SQL commands failed during restore: ' . json_encode($errors));
+            // Continue with restore but log warnings
+        }
+    }
     
+    /**
+     * Alternative restore method with better error handling
+     */
+    public function restoreAdvanced()
+    {
+        try {
+            $file = $this->request->getFile('backup_file');
+            $db = \Config\Database::connect();
+
+            if (!$file->isValid()) {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'File backup tidak valid: ' . $file->getErrorString()
+                ]);
+            }
+
+            // Validasi file
+            $extension = strtolower($file->getClientExtension() ?? pathinfo($file->getName(), PATHINFO_EXTENSION));
+            if ($extension !== 'sql') {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'File harus berformat .sql'
+                ]);
+            }
+
+            $sqlContent = file_get_contents($file->getTempName());
+            if (empty($sqlContent)) {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Isi file kosong'
+                ]);
+            }
+
+            // Use mysql command line if available (more reliable)
+            $dbConfig = $this->getDatabaseConfig();
+            if ($this->tryMysqlRestore($file->getTempName(), $dbConfig)) {
+                return $this->response->setJSON([
+                    'status' => 'success',
+                    'message' => 'Restore berhasil dilakukan menggunakan mysql command.'
+                ]);
+            }
+
+            // Fallback to PHP method
+            return $this->restore();
+            
+        } catch (\Exception $e) {
+            log_message('error', 'Advanced Restore Error: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan saat restore: ' . $e->getMessage()
+            ]);
+        }
+    }
+    
+    /**
+     * Try to use mysql command for restore
+     */
+    private function tryMysqlRestore($filepath, $dbConfig)
+    {
+        try {
+            $command = sprintf(
+                'mysql --host=%s --port=%d --user=%s --password=%s %s < %s 2>&1',
+                escapeshellarg($dbConfig['hostname']),
+                $dbConfig['port'],
+                escapeshellarg($dbConfig['username']),
+                escapeshellarg($dbConfig['password']),
+                escapeshellarg($dbConfig['database']),
+                escapeshellarg($filepath)
+            );
+            
+            exec($command, $output, $returnCode);
+            
+            if ($returnCode !== 0) {
+                log_message('error', 'MySQL Restore Error: ' . implode("\n", $output));
+                return false;
+            }
+            
+            return true;
+            
+        } catch (\Exception $e) {
+            log_message('error', 'MySQL Restore Exception: ' . $e->getMessage());
+            return false;
+        }
+    }
+
     /**
      * List available backup files
      */
@@ -518,12 +732,15 @@ class BackupController extends BaseController
         try {
             $tables = $this->db->listTables();
             $dbConfig = $this->getDatabaseConfig();
+            $dependencies = $this->getTableDependencies();
             
             return $this->response->setJSON([
                 'status' => 'success',
                 'message' => 'Database connected successfully',
                 'tables_count' => count($tables),
                 'tables' => $tables,
+                'dependencies' => $dependencies,
+                'deletion_order' => $this->getTableDeletionOrder($tables),
                 'db_config' => [
                     'hostname' => $dbConfig['hostname'],
                     'database' => $dbConfig['database'],

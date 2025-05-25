@@ -1,4 +1,39 @@
-<?= $this->extend('layouts/v_wrapper') ?>
+// Restore form
+    document.getElementById('restoreForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const fileInput = document.getElementById('backupFile');
+        const useAdvanced = document.getElementById('useAdvancedRestore').checked;
+        
+        if (!fileInput.files[0]) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Peringatan!',
+                text: 'Pilih file backup terlebih dahulu'
+            });
+            return;
+        }
+        
+        const result = await Swal.fire({
+            title: 'Konfirmasi Restore',
+            html: `
+                <p>Apakah Anda yakin ingin melakukan restore?</p>
+                <p><strong style="color: red;">Data yang ada akan diganti!</strong></p>
+                <p>Metode: ${useAdvanced ? 'Advanced (MySQL Command)' : 'Standard (PHP)'}</p>
+            `,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, Restore!',
+            cancelButtonText: 'Batal'
+        });
+        
+        if (!result.isConfirmed) return;
+        
+        const formData = new FormData(this);
+        const progressDiv = document.getElementById('restoreProgress');
+        const progressBar = progressDiv.querySelector('.progress<?= $this->extend('layouts/v_wrapper') ?>
 <?= $this->section('content') ?>
 <div class="content-wrapper">
     <!-- Content Header -->
@@ -114,10 +149,28 @@
                                     <small class="form-text text-muted">Format yang didukung: .sql</small>
                                 </div>
                                 
-                                <button type="submit" class="btn btn-warning">
-                                    <i class="fas fa-upload"></i>
-                                    Restore Database
-                                </button>
+                                <div class="form-group">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="useAdvancedRestore">
+                                        <label class="form-check-label" for="useAdvancedRestore">
+                                            Gunakan restore advanced (untuk database besar)
+                                        </label>
+                                    </div>
+                                    <small class="form-text text-muted">
+                                        Metode advanced menggunakan mysql command line jika tersedia
+                                    </small>
+                                </div>
+                                
+                                <div class="btn-group">
+                                    <button type="submit" class="btn btn-warning">
+                                        <i class="fas fa-upload"></i>
+                                        Restore Database
+                                    </button>
+                                    <button type="button" class="btn btn-info" id="btnTestConnection">
+                                        <i class="fas fa-vial"></i>
+                                        Test Koneksi
+                                    </button>
+                                </div>
                             </form>
 
                             <!-- Progress Bar -->
@@ -435,150 +488,160 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Perbaikan untuk bagian Restore form di JavaScript
-document.getElementById('restoreForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const fileInput = document.getElementById('backupFile');
-    const file = fileInput.files[0];
-    
-    if (!file) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Peringatan!',
-            text: 'Pilih file backup terlebih dahulu'
-        });
-        return;
-    }
-    
-    // Validasi ekstensi file di frontend
-    const fileName = file.name;
-    const fileExtension = fileName.split('.').pop().toLowerCase();
-    
-    console.log('File Info:', {
-        name: fileName,
-        extension: fileExtension,
-        size: file.size,
-        type: file.type
-    });
-    
-    if (fileExtension !== 'sql') {
-        Swal.fire({
-            icon: 'error',
-            title: 'File Tidak Valid!',
-            text: `File harus berekstensi .sql (Anda memilih: .${fileExtension})`
-        });
-        return;
-    }
-    
-    // Validasi ukuran file (max 50MB)
-    const maxSize = 50 * 1024 * 1024; // 50MB in bytes
-    if (file.size > maxSize) {
-        Swal.fire({
-            icon: 'error',
-            title: 'File Terlalu Besar!',
-            text: 'Ukuran file maksimal 50MB'
-        });
-        return;
-    }
-    
-    const result = await Swal.fire({
-        title: 'Konfirmasi Restore',
-        text: 'Apakah Anda yakin ingin melakukan restore? Data yang ada akan diganti!',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Ya, Restore!',
-        cancelButtonText: 'Batal'
-    });
-    
-    if (!result.isConfirmed) return;
-    
-    const formData = new FormData();
-    formData.append('backup_file', file);
-    
-    const progressDiv = document.getElementById('restoreProgress');
-    const progressBar = progressDiv.querySelector('.progress-bar');
-    
-    progressDiv.style.display = 'block';
-    progressBar.style.width = '50%';
-    progressBar.setAttribute('aria-valuenow', '50');
-    
-    try {
-        console.log('Sending restore request...');
+    // Restore form
+    document.getElementById('restoreForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
         
-        const response = await fetch(`${API_BASE}/restore`, {
-            method: 'POST',
-            body: formData
-        });
+        const fileInput = document.getElementById('backupFile');
+        const useAdvanced = document.getElementById('useAdvancedRestore').checked;
         
-        console.log('Response status:', response.status);
-        
-        const result = await response.json();
-        console.log('Response data:', result);
-        
-        progressBar.style.width = '100%';
-        progressBar.setAttribute('aria-valuenow', '100');
-        
-        if (result.status === 'success') {
+        if (!fileInput.files[0]) {
             Swal.fire({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: result.message,
-                timer: 3000,
-                showConfirmButton: false
+                icon: 'warning',
+                title: 'Peringatan!',
+                text: 'Pilih file backup terlebih dahulu'
             });
-            this.reset();
-            $('.custom-file-label').removeClass("selected").html("Pilih file...");
-        } else {
+            return;
+        }
+        
+        const result = await Swal.fire({
+            title: 'Konfirmasi Restore',
+            html: `
+                <p>Apakah Anda yakin ingin melakukan restore?</p>
+                <p><strong style="color: red;">Data yang ada akan diganti!</strong></p>
+                <p>Metode: ${useAdvanced ? 'Advanced (MySQL Command)' : 'Standard (PHP)'}</p>
+            `,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, Restore!',
+            cancelButtonText: 'Batal'
+        });
+        
+        if (!result.isConfirmed) return;
+        
+        const formData = new FormData(this);
+        const progressDiv = document.getElementById('restoreProgress');
+        const progressBar = progressDiv.querySelector('.progress-bar');
+        
+        progressDiv.style.display = 'block';
+        progressBar.style.width = '25%';
+        progressBar.setAttribute('aria-valuenow', '25');
+        
+        // Show processing message
+        Swal.fire({
+            title: 'Memproses Restore...',
+            html: 'Harap tunggu, proses restore sedang berjalan.',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        
+        try {
+            progressBar.style.width = '50%';
+            progressBar.setAttribute('aria-valuenow', '50');
+            
+            // Choose endpoint based on method
+            const endpoint = useAdvanced ? 'restore-advanced' : 'restore';
+            
+            const response = await fetch(`${API_BASE}/${endpoint}`, {
+                method: 'POST',
+                body: formData
+            });
+            
+            progressBar.style.width = '75%';
+            progressBar.setAttribute('aria-valuenow', '75');
+            
+            const result = await response.json();
+            
+            progressBar.style.width = '100%';
+            progressBar.setAttribute('aria-valuenow', '100');
+            
+            // Close loading dialog
+            Swal.close();
+            
+            if (result.status === 'success') {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: result.message,
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+                this.reset();
+                $('.custom-file-label').removeClass("selected").html("Pilih file...");
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    html: `
+                        <p>${result.message}</p>
+                        ${result.errors ? '<small>Detail error: ' + JSON.stringify(result.errors) + '</small>' : ''}
+                    `
+                });
+            }
+        } catch (error) {
+            Swal.close();
             Swal.fire({
                 icon: 'error',
-                title: 'Gagal!',
-                text: result.message || 'Terjadi kesalahan saat restore'
+                title: 'Error!',
+                text: error.message
             });
+        } finally {
+            setTimeout(() => {
+                progressDiv.style.display = 'none';
+                progressBar.style.width = '0%';
+                progressBar.setAttribute('aria-valuenow', '0');
+            }, 1000);
         }
-    } catch (error) {
-        console.error('Restore error:', error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error!',
-            text: 'Terjadi kesalahan: ' + error.message
-        });
-    } finally {
-        setTimeout(() => {
-            progressDiv.style.display = 'none';
-            progressBar.style.width = '0%';
-            progressBar.setAttribute('aria-valuenow', '0');
-        }, 1000);
-    }
-});
+    });
 
-// Tambahkan validasi real-time saat file dipilih
-document.getElementById('backupFile').addEventListener('change', function() {
-    const file = this.files[0];
-    const label = this.nextElementSibling;
-    
-    if (file) {
-        const fileName = file.name;
-        const fileExtension = fileName.split('.').pop().toLowerCase();
+    // Test connection button
+    document.getElementById('btnTestConnection').addEventListener('click', async function() {
+        const btn = this;
+        const originalText = btn.innerHTML;
         
-        if (fileExtension === 'sql') {
-            label.classList.add("selected");
-            label.classList.remove("text-danger");
-            label.classList.add("text-success");
-            label.innerHTML = `✓ ${fileName}`;
-        } else {
-            label.classList.add("selected");
-            label.classList.add("text-danger");
-            label.classList.remove("text-success");
-            label.innerHTML = `✗ ${fileName} (harus .sql)`;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Testing...';
+        btn.disabled = true;
+        
+        try {
+            const response = await fetch(`${API_BASE}/test`);
+            const result = await response.json();
+            
+            if (result.status === 'success') {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Koneksi Berhasil!',
+                    html: `
+                        <p><strong>Database:</strong> ${result.db_config.database}</p>
+                        <p><strong>Host:</strong> ${result.db_config.hostname}:${result.db_config.port}</p>
+                        <p><strong>Total Tabel:</strong> ${result.tables_count}</p>
+                        ${result.dependencies ? '<p><strong>Dependencies:</strong> Terdeteksi</p>' : ''}
+                    `,
+                    timer: 5000
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Koneksi Gagal!',
+                    text: result.message
+                });
+            }
+        } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'Tidak dapat menghubungi server: ' + error.message
+            });
+        } finally {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
         }
-    } else {
-        label.classList.remove("selected", "text-danger", "text-success");
-        label.innerHTML = "Pilih file...";
-    }
-});
+    });
 
     // Download backup
     window.downloadBackup = function(filename) {

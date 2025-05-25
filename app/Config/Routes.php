@@ -54,13 +54,24 @@ $routes->group('', ['filter' => 'auth'], function($routes) {
         $routes->get('delete/(:segment)', 'TransactionController::delete/$1');
     });
 
-    // Rental Status
+    // Rental Status Management Routes
     $routes->group('rental-status', ['namespace' => 'App\Controllers\Rental'], function($routes) {
-        // Rental-Status
+        // Main pages
         $routes->get('/', 'RentalStatusController::index');
-        $routes->get('detail/(:segment)', 'RentalStatusController::detail/$1');
-        $routes->post('update', 'RentalStatusController::updateStatus');
-        $routes->get('print/(:segment)', 'RentalStatusController::print/$1');
+        $routes->get('detail/(:num)', 'RentalStatusController::detail/$1');
+        
+        // Update operations
+        $routes->post('update-status', 'RentalStatusController::updateStatus');
+        $routes->post('bulk-update', 'RentalStatusController::bulkUpdate');
+        
+        // Print and export
+        $routes->get('print/(:num)', 'RentalStatusController::print/$1');
+        $routes->get('download-pdf/(:num)', 'RentalStatusController::downloadPDF/$1');
+        $routes->get('export/(:alpha)', 'RentalStatusController::export/$1');
+        $routes->get('export', 'RentalStatusController::export');
+        
+        // API endpoints
+        $routes->get('stats', 'RentalStatusController::getStats');
     });
 
     // User
@@ -111,6 +122,7 @@ $routes->group('', ['filter' => 'auth'], function($routes) {
     $routes->group('user', ['namespace' => 'App\Controllers\Payment'], function($routes) {
        // $routes->get('payment/', 'PaymentController::index');
         $routes->post('payment/confirm', 'PaymentController::confirm');
+        $routes->get('payment/confirm/(:segment)', 'PaymentController::uploadProof/$1');
     });
 
     // Transaction
@@ -128,15 +140,21 @@ $routes->group('', ['filter' => 'auth'], function($routes) {
 
     // Database backup and restore routes
     $routes->group('backup', ['namespace' => 'App\Controllers\Backup'], function($routes) {
-        $routes->get('/', 'BackupController::index');
-        $routes->post('backup', 'BackupController::backup');
-        $routes->post('backup-tables', 'BackupController::backupTables');
-        $routes->post('restore', 'BackupController::restore');
-        $routes->get('list-backups', 'BackupController::listBackups');
-        $routes->get('tables', 'BackupController::getTables');
-        $routes->get('download/(:segment)', 'BackupController::downloadBackup/$1');
-        $routes->delete('delete/(:segment)', 'BackupController::deleteBackup/$1');
-    });
+    // Main page
+    $routes->get('/', 'BackupController::index');
+    
+    // API endpoints
+    $routes->get('tables', 'BackupController::getTables');
+    $routes->post('backup', 'BackupController::backup');
+    $routes->post('backup-tables', 'BackupController::backupTables');
+    $routes->post('restore', 'BackupController::restore');
+    $routes->post('restore-advanced', 'BackupController::restoreAdvanced');
+    $routes->get('list-backups', 'BackupController::listBackups');
+    $routes->get('download/(:segment)', 'BackupController::downloadBackup/$1');
+    $routes->delete('delete/(:segment)', 'BackupController::deleteBackup/$1');
+    $routes->get('test', 'BackupController::test');
+});
+
 
 
 

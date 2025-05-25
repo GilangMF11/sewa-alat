@@ -37,6 +37,7 @@ class CartController extends BaseController
         $userId = session()->get('user_id');
         $itemId = $this->request->getPost('item_id');
         $quantity = (int) $this->request->getPost('quantity');
+        
 
         // Cari atau buat cart aktif untuk user ini
         $cart = $this->cartModel

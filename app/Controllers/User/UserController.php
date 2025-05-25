@@ -169,7 +169,7 @@ class UserController extends BaseController
             return redirect()->to('/login');
         }
 
-        $rentals = $this->rentalModel->where('user_id', $userId)->findAll();
+        $rentals = $this->rentalModel->where('user_id', $userId)->orderBy('created_at', 'DESC')->findAll();
 
         return view('Users/transactions/v_user_transactions', [
             'rentals' => $rentals
@@ -184,7 +184,7 @@ class UserController extends BaseController
             return redirect()->to('/login');
         }
 
-        // Ambil transaksi berdasarkan ID
+        // Ambil transaksi berdasarkan ID DESC
         $rental = $this->rentalModel->find($rentalId);
 
         if (!$rental || $rental['user_id'] !== $userId) {
@@ -199,6 +199,8 @@ class UserController extends BaseController
             'rentalItems' => $rentalItems
         ]);
     }
+
+    
 
     public function print($id)
     {
