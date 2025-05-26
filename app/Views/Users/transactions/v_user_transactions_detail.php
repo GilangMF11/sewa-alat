@@ -81,6 +81,7 @@
                                 <tr>
                                     <th>Nama Barang</th>
                                     <th>Jumlah</th>
+                                    <th>Tanggal Sewa</th>
                                     <th>Harga</th>
                                     <th>Subtotal</th>
                                 </tr>
@@ -90,6 +91,7 @@
                                     <tr>
                                         <td><?= esc($item['item_name']) ?></td>
                                         <td><?= esc($item['quantity']) ?></td>
+                                        <td><? esc($item['return_date']  ) ?></td>
                                         <td>Rp <?= number_format($item['price'], 0, ',', '.') ?></td>
                                         <td>Rp <?= number_format($item['price'] * $item['quantity'], 0, ',', '.') ?></td>
                                     </tr>

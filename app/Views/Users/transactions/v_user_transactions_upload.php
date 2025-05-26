@@ -420,9 +420,6 @@
 }
 
 /* Transaction Details */
-.transaction-details {
-    space-y: 15px;
-}
 
 .detail-item {
     display: flex;
@@ -457,9 +454,7 @@
 }
 
 /* Bank Information */
-.bank-details {
-    space-y: 15px;
-}
+
 
 .bank-item {
     display: flex;

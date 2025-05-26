@@ -419,9 +419,6 @@
 }
 
 /* Detail Items */
-.transaction-details {
-    space-y: 15px;
-}
 
 .detail-item {
     display: flex;
