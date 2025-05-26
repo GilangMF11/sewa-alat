@@ -40,87 +40,103 @@ class CheckoutController extends BaseController
 
     // Proses checkout
     public function store()
-{
-    $userId = session()->get('user_id');
-    $customerName = $this->request->getPost('customer_name');
-    $address = $this->request->getPost('address');
-    $borrowDate = $this->request->getPost('borrow_date');
-    $returnDate = $this->request->getPost('return_date');
-    $paymentType = $this->request->getPost('payment_type');
-    $duration = (int) $this->request->getPost('duration');
+    {
+        $userId = session()->get('user_id');
+        $customerName = $this->request->getPost('customer_name');
+        $address = $this->request->getPost('address');
+        $borrowDate = $this->request->getPost('borrow_date');
+        $returnDate = $this->request->getPost('return_date');
+        $paymentType = $this->request->getPost('payment_type');
+        $duration = (int) $this->request->getPost('duration');
+        $shippingCost = (int) $this->request->getPost('shipping_cost');
 
-    // Pastikan durasi minimal 1 hari
-    if ($duration < 1) {
-        $duration = 1;
-    }
+        // Validasi input
+        if (!$customerName || !$address || !$borrowDate || !$returnDate || !$paymentType) {
+            return redirect()->back()->with('error', 'Semua field wajib diisi.');
+        }
 
-    // Ambil keranjang aktif
-    $cart = $this->cartModel
-        ->where('user_id', $userId)
-        ->where('status', '1')
-        ->first();
+        // Pastikan durasi minimal 1 hari
+        if ($duration < 1) {
+            $duration = 1;
+        }
 
-    if (!$cart) {
-        return redirect()->to('/user/cart')->with('error', 'Keranjang kosong.');
-    }
+        // Validasi shipping cost
+        $allowedShippingCosts = [0, 200000, 500000];
+        if (!in_array($shippingCost, $allowedShippingCosts)) {
+            return redirect()->back()->with('error', 'Jenis pengiriman tidak valid.');
+        }
 
-    // Ambil item dalam keranjang
-    $cartItems = $this->cartItemModel
-        ->where('cart_id', $cart['id'])
-        ->findAll();
+        // Ambil keranjang aktif
+        $cart = $this->cartModel
+            ->where('user_id', $userId)
+            ->where('status', '1')
+            ->first();
 
-    if (empty($cartItems)) {
-        return redirect()->to('/user/cart')->with('error', 'Tidak ada item dalam keranjang.');
-    }
+        if (!$cart) {
+            return redirect()->to('/user/cart')->with('error', 'Keranjang kosong.');
+        }
 
-    // Hitung total harga berdasarkan durasi sewa
-    $totalPrice = 0;
-    foreach ($cartItems as $item) {
-        $totalPrice += $item['price'] * $item['quantity'] * $duration;
-    }
+        // Ambil item dalam keranjang
+        $cartItems = $this->cartItemModel
+            ->where('cart_id', $cart['id'])
+            ->findAll();
 
-    // Buat kode transaksi dan simpan ke rentals
-    $transactionCode = $this->rentalModel->generateTransactionCode();
-    $rentalId = $this->rentalModel->insert([
-        'transaction_code' => $transactionCode,
-        'user_id' => $userId,
-        'customer_name' => $customerName,
-        'total_price' => $totalPrice,
-        'address' => $address,
-        'shipping_cost' => 0,
-        'return_status' => 0,
-        'payment_status' => 0,
-        'payment_type' => $paymentType,
-        'down_payment' => 0,
-        'payment_due' => null,
-        'discount' => 0,
-    ]);
+        if (empty($cartItems)) {
+            return redirect()->to('/user/cart')->with('error', 'Tidak ada item dalam keranjang.');
+        }
 
-    // Simpan item-item ke rental_items
-    foreach ($cartItems as $item) {
-        $this->rentalItemModel->insert([
-            'rental_id' => $rentalId,
-            'item_id' => $item['item_id'],
-            'borrow_date' => $borrowDate,
-            'return_date' => $returnDate,
-            'quantity' => $item['quantity'],
-            'price' => $item['price']
+        // Hitung total harga berdasarkan durasi sewa
+        $totalPrice = 0;
+        foreach ($cartItems as $item) {
+            $totalPrice += $item['price'] * $item['quantity'] * $duration;
+        }
+
+        // Total akhir = Total produk + Shipping cost
+        $finalTotal = $totalPrice + $shippingCost;
+
+        // Buat kode transaksi dan simpan ke rentals
+        $transactionCode = $this->rentalModel->generateTransactionCode();
+        $rentalId = $this->rentalModel->insert([
+            'transaction_code' => $transactionCode,
+            'user_id' => $userId,
+            'customer_name' => $customerName,
+            'total_price' => $finalTotal, // Total sudah termasuk shipping
+            'address' => $address,
+            'shipping_cost' => $shippingCost, // Simpan shipping cost terpisah
+            'return_status' => 0,
+            'payment_status' => 0,
+            'payment_type' => $paymentType,
+            'down_payment' => 0,
+            'payment_due' => null,
+            'discount' => 0,
+        ]);
+
+        // Simpan item-item ke rental_items
+        foreach ($cartItems as $item) {
+            $this->rentalItemModel->insert([
+                'rental_id' => $rentalId,
+                'item_id' => $item['item_id'],
+                'borrow_date' => $borrowDate,
+                'return_date' => $returnDate,
+                'quantity' => $item['quantity'],
+                'price' => $item['price'] * $duration // Harga sudah dikali durasi per item
+            ]);
+        }
+
+        // Tandai keranjang sudah digunakan
+        $this->cartModel->update($cart['id'], [
+            'status' => '0'
+        ]);
+
+        // Log untuk debugging (opsional)
+        log_message('info', 'Transaksi berhasil dibuat: ' . $transactionCode . ' dengan total: ' . $finalTotal);
+
+        // Ambil data untuk ditampilkan di halaman sukses
+        $transactionData = $this->rentalModel->find($rentalId);
+
+        return view('Users/cart/v_user_cart_checkout_success', [
+            'transaction' => $transactionData
         ]);
     }
-
-    // Tandai keranjang sudah digunakan
-    $this->cartModel->update($cart['id'], [
-        'status' => '0'
-    ]);
-
-    // Ambil data untuk ditampilkan di halaman sukses
-    $transactionData = $this->rentalModel->find($rentalId);
-
-    return view('Users/cart/v_user_cart_checkout_success', [
-        'transaction' => $transactionData
-    ]);
-}
-
-
 
 }
