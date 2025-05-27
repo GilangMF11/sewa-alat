@@ -164,7 +164,7 @@
                     <!-- Modal Detail Transaksi -->
                     <div class="modal fade" id="modalUpdate" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-lg">
-                            <form action="<?= base_url('rental-status/update') ?>" method="post">
+                            <form action="<?= base_url('rental-status/update-status') ?>" method="post">
                                 <?= csrf_field() ?>
                                 <input type="hidden" name="id" id="rental_id">
                                 <div class="modal-content">
